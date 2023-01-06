@@ -10,3 +10,7 @@ class Plistserializer(serializers.Serializer):
     lname=low()
     rname=serializers.ListField(child=serializers.ListField(child=serializers.IntegerField()))
     # rname=ListField(child=serializers.IntegerField())
+    def validate(self, data):
+        if data['fname'] is 0:
+            raise serializers.ValidationError("fname is 0")
+        return data
