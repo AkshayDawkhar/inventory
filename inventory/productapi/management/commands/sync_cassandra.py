@@ -5,9 +5,9 @@ from cassandra.cqlengine import connection
 from cassandra.cluster import Cluster
 cluster = Cluster(['127.0.0.1'])
 sec = cluster.connect()
-con = connection.register_connection('cluster2',session=sec)
+con = connection.register_connection('cluster',session=sec)
 class mccdr(Model):
-    __connection__= 'cluster2'
+    __connection__= 'cluster'
     __table_name__='mccdr'
     __keyspace__='model1'
     fname=columns.Integer(primary_key=True)
@@ -22,7 +22,7 @@ class Command(BaseCommand):
         # cluster = Cluster(['127.0.0.1'])
     def handle(self,*args,**kwargs):
         print('hello')
-        mc=mccdr(fname=12,mname='a',lname='b')
+        mc=mccdr(fname=11,mname='a',lname='b')
         mc.save()
 
 
