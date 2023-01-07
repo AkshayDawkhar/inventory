@@ -1,11 +1,12 @@
 # from django.db import models
 from cassandra.cqlengine.models import Model,columns
 # Create your models here.
-class mccdr(Model):
+class ProductList(Model):
     __connection__= 'cluster'
-    __table_name__='mccdr'
+    __table_name__='product_list'
     __keyspace__='model1'
-    fname=columns.Integer(primary_key=True)
-    # mname=columns.Text()
-    lname=columns.Text()
-    oname=columns.Text()
+    pname=columns.Text(primary_key=True)
+    color=columns.Text(primary_key=True,default='black')
+    required_iteams =columns.Set(columns.Text())
+    category = columns.Text()
+    pid=columns.UUID()

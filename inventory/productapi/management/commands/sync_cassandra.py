@@ -3,8 +3,8 @@ from cassandra.cqlengine.models import Model
 from cassandra.cqlengine import columns, connection
 from cassandra.cluster import Cluster
 from cassandra.cqlengine.management import sync_table,create_keyspace_simple
-from productapi.models import mccdr
-import os
+from productapi.models import ProductList
+import os,uuid
 def testCassandra():
     #for a -->  UserWarning: CQLENG_ALLOW_SCHEMA_MANAGEMENT environment variable is not set. Future versions of this package will require this variable to enable management functions.
     if os.getenv('CQLENG_ALLOW_SCHEMA_MANAGEMENT') is None:
@@ -16,8 +16,8 @@ def testCassandra():
     con = connection.register_connection('cluster',session=sec)
     create_keyspace_simple('model1', 1,connections=['cluster'])
     print('synchronizing db ')
-    sync_table(mccdr)
-    mc=mccdr(fname=220000,lname='b')
+    sync_table(ProductList)
+    mc=ProductList(pname='a',required_iteams=['a','b'],category='mic',pid=uuid.uuid1())
     mc.save()
 
 class Command(BaseCommand):
