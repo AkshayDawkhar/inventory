@@ -8,11 +8,13 @@ from productapi.serializers import Plistserializer
 
 @api_view(['GET','POST'])
 def productlist(request):
-    d={"pname": "a", "color": "black", "category": "mic", "pid": "d4ed279c-8e83-11ed-a144-f889d2e645af", "required_iteams": ["a", "b"]}
+    d={'pname': 'a', 'color': 'black', 'category': 'mic', 'pid': 'd4ed279c-8e83-11ed-a144-f889d2e645af', 'required_iteams': ['a', 'b']}
+    if request.method == 'POST':
+        d=request.data
     pls= Plistserializer(data=d)
     if pls.is_valid():
         print('------------------------------------------valid',sep='\n')
         return Response(pls.data,status=201)
     else:
-        print('---------------------------------------not valid',pls.data.get('fname'),sep='\n')
+        print('---------------------------------------not valid',sep='\n')
     return Response({})
