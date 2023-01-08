@@ -17,7 +17,7 @@ def testCassandra():
     create_keyspace_simple('model1', 1,connections=['cluster'])
     print('synchronizing db ')
     sync_table(ProductList)
-    mc=ProductList(pname='a',required_iteams=['a','b'],category='mic',pid=uuid.uuid1())
+    mc=ProductList(pname='a',dname='A',required_iteams=['a','b'],category='mic',pid=uuid.uuid1())
     mc.save()
 
 class Command(BaseCommand):
