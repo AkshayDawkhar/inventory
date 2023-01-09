@@ -7,6 +7,7 @@ from productapi.serializers import Plistserializer
 from cassandra.cqlengine import columns, connection
 from cassandra.cluster import Cluster
 from cassandra.query import dict_factory
+from productapi.cqlqueries import ProductCQL
 # from rest_framework.serializers import Serializer
 # Create your views here.
 cluster = Cluster(['127.0.0.1'])
@@ -14,8 +15,13 @@ sec = cluster.connect()
 con = connection.register_connection('cluster',session=sec)
 secs = cluster.connect('model1')
 sec.row_factory = dict_factory
+p=ProductCQL()
 @api_view(['GET','POST'])
-def productlist(request):
+def product_list(request):
+    a=p.prduct_list()
+    return Response(a)    
+@api_view(['GET','POST'])
+def get_product(request,pid):
     d={'pname': 'a', 'color': 'black', 'category': 'mic', 'pid':uuid.uuid4(), 'required_iteams': ['a', 'b']}
     if request.method == 'POST':
         d=request.data
