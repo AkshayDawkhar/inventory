@@ -4,5 +4,5 @@ from productapi import views
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('',views.product_list),
-    path('product/<int:pid>',views.get_product)
+    path('<uuid:pid>',views.get_product)
 ]
