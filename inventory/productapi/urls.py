@@ -3,5 +3,6 @@ from django.urls import path,include
 from productapi import views
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('',views.productlist)
+    path('',views.product_list),
+    path('product/<int:pid>',views.get_product)
 ]
