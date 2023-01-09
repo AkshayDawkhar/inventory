@@ -1,6 +1,5 @@
 from cassandra.cluster import Cluster
 
-a=12
 # class DatabaseError(Exception):
 #     """
 #     The base error that functions in this module will raise when things go
@@ -17,11 +16,10 @@ a=12
 #     pass
 
 class ProductCQL:
-    aa=a
+    
     cluster=Cluster(['127.0.0.1'])
     session =cluster.connect()
-    rr=None
-    m=['media1', 'media player dj200usb pinto','media','media']
+    m=['media1', 'media player dj200usb pinto','media']
     sp=session.prepare("SELECT * FROM model1.product_list1 WHERE pname = ?")
     # def __init__(self,d):
         # CREATE_PROCUST="CREATE TABLE model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_iteams frozen<set <text >> ,PRIMARY KEY (pname , required_iteams, color  )) WITH CLUSTERING ORDER BY (required_iteams ASC ) ;"
@@ -37,11 +35,7 @@ class ProductCQL:
                 # raise NotFound("user not found")
             rf.append(r1.all())
         self.rr=self.session.execute("SELECT * FROM model1.product_list1;")
-        return rf
+        return [r for r in rf]
 if __name__ == "__main__":
     p=ProductCQL()
     print(p.getd())
-    # print(p.getd())
-    # p1=ProductCQL()
-    # print(p1.getd())
-        
