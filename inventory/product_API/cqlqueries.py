@@ -21,10 +21,10 @@ class InvalidDictionary(DatabaseError):
 
 class ProductCQL:
     cluster = Cluster(['127.0.0.1'])
-    session = cluster.connect()
+    session = cluster.connect('model1')
     session.row_factory = dict_factory
     m = ['media1', 'media player dj200usb pinto', 'media']
-    get_product_query = session.prepare("SELECT * FROM model1.product_list1_by_id WHERE pid = ? LIMIT  1 ")
+    get_product_query = session.prepare("SELECT * FROM product_list1_by_id WHERE pid = ? LIMIT  1 ")
 
     def get_product(self, pid):
         a = self.session.execute(self.get_product_query, (pid,))
@@ -35,12 +35,33 @@ class ProductCQL:
         return a.one()
 
     def product_list(self):
-        sp = self.session.prepare("SELECT dname , pid FROM model1.product_list1 WHERE pname = ?")
-        a = self.session.execute("SELECT dname , pid FROM model1.product_list1 ;")
+        sp = self.session.prepare("SELECT dname , pid FROM product_list1 WHERE pname = ?")
+        a = self.session.execute("SELECT dname , pid FROM product_list1 ;")
         return a.all()
+
+    def get_pid(self, pname, color, required_iteams):
+        sp = self.session.prepare(
+            "SELECT pid FROM product_list1 WHERE pname = ? AND color= ? AND required_iteams = ? ;")
+        r = self.session.execute(sp, (pname, color, set(required_iteams)))
+        if not r.one():
+            raise NotFound('product not found')
+        return r.one()['pid']
+
+    def create_product(self, pname, required_iteams, color, category, dname):
+        sp = self.session.prepare("INSERT INTO product_list1 ( pname , required_iteams , color , category , dname , "
+                                  "pid ) VALUES ( ?, ?,?, ?, ?, ?) IF NOT EXISTS ;")
+        sp1 = self.session.prepare("INSERT INTO product_list1_by_id (pid , required_iteams , pname , color ,dname ,  "
+                                   "category  ) VALUES (?,?,?,?,?,? );")
+        pid = uuid.uuid1()
+        r = self.session.execute(sp, (pname, set(required_iteams), color, category, dname, pid))
+        if r.one()['[applied]']:
+            r1 = self.session.execute(sp1, (pid, set(required_iteams), pname, color, dname, category,))
+        return r.one()
 
 
 if __name__ == "__main__":
     p = ProductCQL()
-    print(p.get_product(uuid.UUID('6555aec7-df75-4da4-b2a6-1c18907ff18b')))
+    # print(p.get_product(uuid.UUID('6555aec7-df75-4da4-b2a6-1c18907ff18b')))
     # print(p.prduct_list())
+    # print(p.get_pid('media', 'red', ['row1', 'row2', 'row4', 'row3']))
+    print(p.create_product('media4', ['row1', 'row2', 'row3', 'row5'], 'black', 'category', 'dname'))
