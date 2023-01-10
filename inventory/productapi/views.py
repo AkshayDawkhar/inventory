@@ -7,7 +7,7 @@ from productapi.serializers import Plistserializer
 from cassandra.cqlengine import columns, connection
 from cassandra.cluster import Cluster
 from cassandra.query import dict_factory
-from productapi.cqlqueries import ProductCQL
+from productapi.cqlqueries import ProductCQL,DatabaseError
 # from rest_framework.serializers import Serializer
 # Create your views here.
 cluster = Cluster(['127.0.0.1'])
@@ -22,24 +22,9 @@ def product_list(request):
     return Response(a)    
 @api_view(['GET','POST'])
 def get_product(request,pid):
-    d={'pname': 'a', 'color': 'black', 'category': 'mic', 'pid':uuid.uuid4(), 'required_iteams': ['a', 'b']}
-    if request.method == 'POST':
-        d=request.data
-        d['pid']=uuid.uuid4()
-    pls= Plistserializer(data=d)
-    if pls.is_valid():
-        print('------------------------------------------valid',sep='\n')
-        p=ProductList(**pls.data)
-        p.save()
-        #a=ProductList.all()
-        rs= sec.execute("SELECT * FROM model1.product_list")
-
-        for r in rs:
-            print(dict(r))
-            rpls= Plistserializer(data=dict(r))
-            if rpls.is_valid():
-                print('================================-===========================valid')
-        return Response(rpls.data,status=201)
-    else:
-        print('---------------------------------------not valid',sep='\n')
-    return Response({})
+    try :
+        a=p.get_product(pid=pid)
+    except DatabaseError :
+        return Response({'error':'Product Not Found %s' %(pid,)},status=404)
+    print(a)
+    return Response(a)
