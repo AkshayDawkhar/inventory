@@ -27,5 +27,21 @@ class ProductListSerializer(serializers.Serializer):
     pid = serializers.UUIDField()
 
     def validate(self, attrs):
-        attrs['pname'] = re.sub(r'[^\w\s]', '', attrs['dname'].lower())
+        attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
+        return attrs
+
+
+class CreateProduct(serializers.Serializer):
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    pname = low(required=False)
+    color = serializers.ChoiceField(color_choices, default='black')
+    required_items = serializers.ListField(child=serializers.ChoiceField(required_item_choices))
+
+    def validate(self, attrs):
+        attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
         return attrs
