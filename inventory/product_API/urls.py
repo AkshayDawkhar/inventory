@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('', views.product_list),
-    path('<uuid:pid>', views.get_product)
+    path('', views.ProductList.as_view()),
+    path('<uuid:pid>', views.GetProduct.as_view())
 ]
