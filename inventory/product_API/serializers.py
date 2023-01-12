@@ -31,7 +31,7 @@ class ProductListSerializer(serializers.Serializer):
         return attrs
 
 
-class CreateProduct(serializers.Serializer):
+class CreateProductSerializer(serializers.Serializer):
     def create(self, validated_data):
         pass
 
@@ -39,9 +39,18 @@ class CreateProduct(serializers.Serializer):
         pass
 
     pname = low(required=False)
+    dname = serializers.CharField()
     color = serializers.ChoiceField(color_choices, default='black')
     required_items = serializers.ListField(child=serializers.ChoiceField(required_item_choices))
-
+    category = serializers.CharField()
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
+        # if attrs['pname'] == 'red':
+            # raise serializers.ValidationError('nothing valid')
         return attrs
+    def validated_dname(self,val):
+        if val['pname'] == 'red':
+            print('---------------------------')
+            raise serializers.ValidationError('nothing valid really')
+        raise serializers.ValidationError('nothing valid12')
+        return val

@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .cqlqueries import ProductCQL, DatabaseError
 from django.shortcuts import redirect
-from .serializers import ProductListSerializer
+from .serializers import CreateProductSerializer
 
 p = ProductCQL()
 
@@ -14,19 +14,21 @@ class ProductList(APIView):
 
     def post(self, request):
         # code for creating product
-        sp = ProductListSerializer(data=request.data)
+        sp = CreateProductSerializer(data=request.data)
         if sp.is_valid():
             try:
                 pid = p.get_pid(pname=sp.data['pname'], color=sp.data['color'],
                                 required_iteams=sp.data['required_items'])
-                return Response(data={'error': 'Already Exist', 'pid': pid}, status=409)
+                return Response(data={'error': 'Already Exist', 'pid': pid}, status=226)
 
             except DatabaseError:
+                p.create_product(pname=sp.data['pname'], required_iteams=sp.data['required_items'],
+                                 color=sp.data['color'], category=sp.data['category'], dname=sp.data['dname'])
+                return Response(data=p.product_list(), status=201)
+                # return Response(data={'error': 'Not Exist'}, status=201)
+        print(sp.errors)
 
-                return Response(data={'error': 'Not Exist'}, status=409)
-        print(sp.data['pname'])
-
-        return Response(data=p.product_list(), status=201)
+        return Response(data=sp.errors, status=400)
 
 
 class Product(APIView):
