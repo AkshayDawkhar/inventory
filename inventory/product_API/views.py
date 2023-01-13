@@ -16,19 +16,10 @@ class ProductList(APIView):
         # code for creating product
         sp = CreateProductSerializer(data=request.data)
         if sp.is_valid():
-            try:
-                pid = p.get_pid(pname=sp.data['pname'], color=sp.data['color'],
-                                required_iteams=sp.data['required_items'])
-                return Response(data={'error': 'Already Exist', 'pid': pid}, status=226)
-
-            except DatabaseError:
-                p.create_product(pname=sp.data['pname'], required_iteams=sp.data['required_items'],
-                                 color=sp.data['color'], category=sp.data['category'], dname=sp.data['dname'])
-                return Response(data=p.product_list(), status=201)
-                # return Response(data={'error': 'Not Exist'}, status=201)
+            return Response(data=p.product_list())
         print(sp.errors)
 
-        return Response(data=sp.errors, status=400)
+        return Response(sp.errors, status=226 if 'error' in sp.errors else 400)
 
 
 class Product(APIView):

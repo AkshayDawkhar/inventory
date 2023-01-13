@@ -1,6 +1,14 @@
 from rest_framework import serializers
 # from rest_framework.fields import UUIDField
 import re
+from .cqlqueries import ProductCQL, DatabaseError
+
+
+class Already_Exist(Exception):
+    pass
+
+
+p = ProductCQL()
 
 
 class low(serializers.CharField):
@@ -38,19 +46,26 @@ class CreateProductSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         pass
 
+    error_massages = {
+        'pname': 'ok',
+        'dname': 'ok',
+        'color': 'ok',
+        'required_items': [],
+        'category': 'ok',
+    }
     pname = low(required=False)
     dname = serializers.CharField()
     color = serializers.ChoiceField(color_choices, default='black')
     required_items = serializers.ListField(child=serializers.ChoiceField(required_item_choices))
     category = serializers.CharField()
+
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
-        # if attrs['pname'] == 'red':
-            # raise serializers.ValidationError('nothing valid')
+        try:
+            pid = p.get_pid(pname=attrs['pname'], color=attrs['color'], required_iteams=attrs['required_items'])
+            raise serializers.ValidationError({'error': 'Already Exist'})
+        except DatabaseError:
+            p.create_product(pname=attrs['pname'], required_iteams=attrs['required_items'],
+                             color=attrs['color'], category=attrs['category'], dname=attrs['dname'])
+            # raise serializers.ValidationError(self.error_massages, code='valid')
         return attrs
-    def validated_dname(self,val):
-        if val['pname'] == 'red':
-            print('---------------------------')
-            raise serializers.ValidationError('nothing valid really')
-        raise serializers.ValidationError('nothing valid12')
-        return val
