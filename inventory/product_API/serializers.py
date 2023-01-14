@@ -62,10 +62,10 @@ class CreateProductSerializer(serializers.Serializer):
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
         try:
-            pid = p.get_pid(pname=attrs['pname'], color=attrs['color'], required_iteams=attrs['required_items'])
+            pid = p.get_pid(pname=attrs['pname'], color=attrs['color'], required_items=attrs['required_items'])
             raise serializers.ValidationError({'error': 'Already Exist'})
         except DatabaseError:
-            p.create_product(pname=attrs['pname'], required_iteams=attrs['required_items'],
+            p.create_product(pname=attrs['pname'], required_items=attrs['required_items'],
                              color=attrs['color'], category=attrs['category'], dname=attrs['dname'])
             # raise serializers.ValidationError(self.error_massages, code='valid')
         return attrs
