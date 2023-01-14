@@ -47,12 +47,12 @@ class ProductCQL:
             raise NotFound('product not found')
         return r.one()['pid']
 
-    def create_product(self, pname, required_iteams, color, category, dname):
+    def create_product(self, pname, required_iteams, color, category, dname,pid=uuid.uuid1()):
         sp = self.session.prepare("INSERT INTO product_list1 ( pname , required_iteams , color , category , dname , "
                                   "pid ) VALUES ( ?, ?,?, ?, ?, ?) IF NOT EXISTS ;")
         sp1 = self.session.prepare("INSERT INTO product_list1_by_id (pid , required_iteams , pname , color ,dname ,  "
                                    "category  ) VALUES (?,?,?,?,?,? );")
-        pid = uuid.uuid1()
+        # pid = uuid.uuid1()
         r = self.session.execute(sp, (pname, set(required_iteams), color, category, dname, pid))
         if r.one()['[applied]']:
             r1 = self.session.execute(sp1, (pid, set(required_iteams), pname, color, dname, category,))
@@ -68,7 +68,7 @@ class ProductCQL:
                 sp1 = self.session.prepare("DELETE FROM product_list1 WHERE pname =? AND required_iteams =? AND color "
                                            "= ? IF EXISTS;")
                 a1 = self.session.execute(sp1, (pname, set(required_iteams), color))
-        return a1.one()
+        return a1.one()['[applied]']
 
     def update_product(self, pid, pname, color, required_iteams, dname, category):
 
@@ -77,6 +77,9 @@ class ProductCQL:
         gt = self.get_product(pid)
         a = self.session.execute(sp, (pname, required_iteams, color, category, dname, pid))
         # FOR deleting the product from product_list1 calling delete product
+        tf = self.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=pname,
+                           required_iteams=required_iteams, color=color)
+        # if tf:
 
         return gt
 
