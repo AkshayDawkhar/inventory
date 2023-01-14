@@ -58,12 +58,27 @@ class ProductCQL:
             r1 = self.session.execute(sp1, (pid, set(required_iteams), pname, color, dname, category,))
         return r.one()
 
+    def delete_product(self,  pname, required_iteams, color,moveto_trash=True,removefrom_product_list1=True,removefrom_product_list1_by_id=True):
+        if moveto_trash:
+            pass
+        else:
+            if removefrom_product_list1_by_id:
+                pass
+            if removefrom_product_list1:
+                sp1 = self.session.prepare("DELETE FROM product_list1 WHERE pname =? AND required_iteams =? AND color "
+                                           "= ? IF EXISTS;")
+                a1 = self.session.execute(sp1, (pname, set(required_iteams), color))
+        return a1.one()
+
     def update_product(self, pid, pname, color, required_iteams, dname, category):
 
         sp = self.session.prepare("UPDATE product_list1_by_id SET pname = ?, required_iteams =?, color = ?, "
                                   "category = ?, dname = ? WHERE pid = ? IF EXISTS;")
+        gt = self.get_product(pid)
         a = self.session.execute(sp, (pname, required_iteams, color, category, dname, pid))
-        return a.one()
+        # FOR deleting the product from product_list1 calling delete product
+
+        return gt
 
 
 if __name__ == "__main__":
@@ -72,5 +87,7 @@ if __name__ == "__main__":
     # print(p.prduct_list())
     # print(p.get_pid('media', 'red', ['row1', 'row2', 'row4', 'row3']))
     # print(p.create_product('media4', ['row1', 'row2', 'row3', 'row5'], 'black', 'category', 'dname'))
-    print(p.update_product(pid=uuid.UUID('9fac422c-942b-11ed-a23f-f889d2e645af'), pname='sounds', color='black',
-                           required_iteams=['row2', 'row2'], dname='sounds', category='soundss'))
+    # print(p.update_product(pid=uuid.UUID('9fac422c-942b-11ed-a23f-f889d2e645af'), pname='sounds', color='black',
+    #                        required_iteams=['row2', 'row2'], dname='sounds', category='soundss'))
+    print(p.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname='djchesounds',
+                           required_iteams=['row1'], color='black'))
