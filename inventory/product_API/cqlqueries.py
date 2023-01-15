@@ -74,8 +74,13 @@ class ProductCQL:
             pass
         else:
             if removefrom_product_list1_by_id:
+                if pname is None:
+                    av = self.get_product(pid)
+                    pname = av['pname']
+                    required_items = av['required_items']
+                    color = av['color']
                 a = self.session.execute(self.delete_product_by_id_query, (pid,))
-                return a
+                # return a
             if removefrom_product_list1:
                 a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
         return a1.one()['[applied]']
