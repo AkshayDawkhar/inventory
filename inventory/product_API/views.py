@@ -35,3 +35,7 @@ class Product(APIView):
     def put(self, request, pid):
         # code for editing the product
         return Response(data={}, status=200)
+
+    def delete(self, request,pid):
+        a=p.delete_product(moveto_trash=False,pid=pid).one()
+        return Response(data=a, status=222)
