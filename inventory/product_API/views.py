@@ -17,7 +17,7 @@ class ProductList(APIView):
         sp = CreateProductSerializer(data=request.data)
         if sp.is_valid():
             return Response(data=p.product_list())
-        print(sp.errors)
+        # print(sp.errors)
 
         return Response(sp.errors, status=226 if 'error' in sp.errors else 400)
 
@@ -29,7 +29,7 @@ class Product(APIView):
         except DatabaseError:
             return Response(data={'error': 'Product Not Found %s' % (pid,)},
                             status=404)
-        print(a)
+        # print(a)
         return Response(a)
 
     def put(self, request, pid):

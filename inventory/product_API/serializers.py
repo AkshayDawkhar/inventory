@@ -65,7 +65,7 @@ class CreateProductSerializer(serializers.Serializer):
             pid = p.get_pid(pname=attrs['pname'], color=attrs['color'], required_items=attrs['required_items'])
             raise serializers.ValidationError({'error': 'Already Exist'})
         except DatabaseError:
-            p.create_product(pname=attrs['pname'], required_items=attrs['required_items'],
+            p.create_product(pname=attrs['pname'], required_items =attrs['required_items'],
                              color=attrs['color'], category=attrs['category'], dname=attrs['dname'])
             # raise serializers.ValidationError(self.error_massages, code='valid')
         return attrs
