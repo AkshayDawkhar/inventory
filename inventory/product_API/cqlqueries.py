@@ -25,11 +25,19 @@ class ProductCQL:
     session.row_factory = dict_factory
     m = ['media1', 'media player dj200usb pinto', 'media']
     get_product_query = session.prepare("SELECT * FROM product_list1_by_id WHERE pid = ? LIMIT  1 ")
-    get_pid_query = session.prepare("SELECT pid FROM product_list1 WHERE pname = ? AND color= ? AND required_items = ? ;")
-    create_product_query = session.prepare("INSERT INTO product_list1 ( pname , required_items , color , category , dname , pid ) VALUES ( ?, ?,?, ?, ?, ?) IF NOT EXISTS ;")
-    create_by_id_query = session.prepare("INSERT INTO product_list1_by_id (pid , required_items , pname , color ,dname , category  ) VALUES (?,?,?,?,?,? );")
-    update_by_id_query = session.prepare("UPDATE product_list1_by_id SET pname = ?, required_items =?, color = ?, category = ?, dname = ? WHERE pid = ? IF EXISTS;")
-    delete_product_query = session.prepare("DELETE FROM product_list1 WHERE pname =? AND required_items =? AND color = ? IF EXISTS;")
+    get_pid_query = session.prepare(
+        "SELECT pid FROM product_list1 WHERE pname = ? AND color= ? AND required_items = ? ;")
+    create_product_query = session.prepare(
+        "INSERT INTO product_list1 ( pname , required_items , color , category , dname , pid ) VALUES ( ?, ?,?, ?, ?, ?) IF NOT EXISTS ;")
+    create_by_id_query = session.prepare(
+        "INSERT INTO product_list1_by_id (pid , required_items , pname , color ,dname , category  ) VALUES (?,?,?,?,?,? );")
+    update_by_id_query = session.prepare(
+        "UPDATE product_list1_by_id SET pname = ?, required_items =?, color = ?, category = ?, dname = ? WHERE pid = ? IF EXISTS;")
+    delete_product_query = session.prepare(
+        "DELETE FROM product_list1 WHERE pname =? AND required_items =? AND color = ? IF EXISTS;")
+    delete_product_by_id_query = session.prepare(
+        "DELETE FROM product_list1_by_id WHERE pid =? IF EXISTS ;")
+
     product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
 
     def get_product(self, pid):
@@ -55,16 +63,19 @@ class ProductCQL:
         if not pid: pid = uuid.uuid1()
         r = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         if r.one()['[applied]']:
-            r1 = self.session.execute(self.create_by_id_query, (pid, set(required_items), pname, color, dname, category,))
+            r1 = self.session.execute(self.create_by_id_query,
+                                      (pid, set(required_items), pname, color, dname, category,))
         return r.one()
 
-    def delete_product(self, pname, required_items, color, moveto_trash=True, removefrom_product_list1=True,
+    def delete_product(self, pid=None, pname=None, required_items=None, color=None, moveto_trash=True,
+                       removefrom_product_list1=True,
                        removefrom_product_list1_by_id=True):
         if moveto_trash:
             pass
         else:
             if removefrom_product_list1_by_id:
-                pass
+                a = self.session.execute(self.delete_product_by_id_query, (pid,))
+                return a
             if removefrom_product_list1:
                 a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
         return a1.one()['[applied]']
@@ -77,7 +88,7 @@ class ProductCQL:
         # FOR deleting the product from product_list1 calling delete product
         tf = self.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt['pname'],
                                  required_items=gt['required_items'], color=gt['color'])
-        gtt=self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
+        gtt = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         return gtt.one()
 
 
@@ -91,4 +102,5 @@ if __name__ == "__main__":
     #                        required_items=['row2', 'row2'], dname='sounds', category='soundss'))
     # print(p.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname='djchesounds',
     #                        required_items=['row1'], color='black'))
-    print(p.update_product(pid=uuid.UUID('757e0bb6-948f-11ed-900f-f889d2e645af'), pname='m4soound', color='redd', required_items=['ROW2'], dname='M4-soound', category='pink'))
+    print(p.update_product(pid=uuid.UUID('757e0bb6-948f-11ed-900f-f889d2e645af'), pname='m4soound', color='redd',
+                           required_items=['ROW2'], dname='M4-soound', category='pink'))
