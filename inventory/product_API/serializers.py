@@ -8,6 +8,10 @@ class Already_Exist(Exception):
     pass
 
 
+class InvalidDname(Exception):
+    pass
+
+
 p = ProductCQL()
 
 
@@ -93,4 +97,6 @@ class UpdateProductSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
+        if not attrs['pname']:
+            raise InvalidDname
         return attrs
