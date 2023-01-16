@@ -1,8 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .cqlqueries import ProductCQL, DatabaseError, NotFound
-from django.shortcuts import redirect
-from .serializers import CreateProductSerializer, UpdateProductSerializer,InvalidDname
+from .serializers import CreateProductSerializer, UpdateProductSerializer, InvalidDname
 
 p = ProductCQL()
 
@@ -40,11 +39,13 @@ class Product(APIView):
                 a = p.update_product(pid=pid, pname=sp.data.get('pname'), color=sp.data.get('color'),
                                      required_items=sp.data.get('required_items'), dname=sp.data.get('dname'),
                                      category=sp.data.get('category'))
+            else:
+                return Response(data=sp.errors, status=400)
         except NotFound:
-            return Response(data={'not found'}, status=404)
+            return Response(data={'error': 'Product Not Found %s' % (pid,)}, status=404)
         except InvalidDname:
-            return Response(data={"dname": ["Invalid Name"]}, status=222)
-        return Response(data=sp.errors, status=220)
+            return Response(data={"dname": ["Invalid Name"]}, status=406)
+        return self.get(request, pid)
 
     def delete(self, request, pid):
         try:
