@@ -15,6 +15,10 @@ class NotFound(DatabaseError):
     pass
 
 
+class Conflict(Exception):
+    pass
+
+
 class InvalidDictionary(DatabaseError):
     pass
 
@@ -88,7 +92,11 @@ class ProductCQL:
     def update_product(self, pid, pname, color, required_items, dname, category):
 
         gt = self.get_product(pid)
-        # gt = gt.one()
+        try:
+            gt1 = self.get_pid(pname, color, required_items)
+            raise Conflict
+        except NotFound:
+            pass
         a = self.session.execute(self.update_by_id_query, (pname, required_items, color, category, dname, pid))
         # FOR deleting the product from product_list1 calling delete product
         tf = self.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt['pname'],

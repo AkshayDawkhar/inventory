@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .cqlqueries import ProductCQL, DatabaseError, NotFound
+from .cqlqueries import ProductCQL, DatabaseError, NotFound, Conflict
 from .serializers import CreateProductSerializer, UpdateProductSerializer, InvalidDname
 
 p = ProductCQL()
@@ -45,6 +45,10 @@ class Product(APIView):
             return Response(data={'error': 'Product Not Found %s' % (pid,)}, status=404)
         except InvalidDname:
             return Response(data={"dname": ["Invalid Name"]}, status=406)
+        except Conflict:
+            return Response(
+                data={"error": "Same Product Exists %s\n%s\n%s" % (sp.data.get('pname'), sp.data.get('color'), sp.data.get('required_items'))},
+                status=409)
         return self.get(request, pid)
 
     def delete(self, request, pid):
