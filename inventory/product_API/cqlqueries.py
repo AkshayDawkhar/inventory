@@ -45,6 +45,7 @@ class ProductCQL:
         "INSERT INTO trash (pname , required_items , color , category , dname , pid ) VALUES ( ?,?,?, ?, ?, ? ) ;")
     restore_fromTrash_query = session.prepare("SELECT * from trash WHERE pid = ? LIMIT 1;")
     delete_fromTrash_query = session.prepare("DELETE from trash WHERE pid = ? IF EXISTS;")
+    get_trashes_query = session.prepare("SELECT dname,pid FROM trash ;")
     product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
 
     def get_product(self, pid):
@@ -81,7 +82,7 @@ class ProductCQL:
             it = self.get_product(pid)
             # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
             self.session.execute(self.insert_into_trash_query, (
-            it['pname'], it['required_items'], it['color'], it['category'], it['dname'], it['pid']))
+                it['pname'], it['required_items'], it['color'], it['category'], it['dname'], it['pid']))
 
         if removefrom_product_list1_by_id:
             if pname is None:
@@ -110,14 +111,17 @@ class ProductCQL:
         gtt = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         return gtt.one()
 
-    def restore(self,pid):
+# Trash product
+    def get_trashes(self):
+        return self.session.execute(self.get_trashes_query).all()
+    def restore(self, pid):
         a = self.session.execute(self.restore_fromTrash_query, (pid,)).one()
         self.session.execute(self.delete_fromTrash_query, (pid,))
         # self.create_product(pname=a['pname'],required_items=a['required_items'],color=a['color'],category=a['category'])
         if a is not None:
             self.create_product(**a)
 
-        
+
 if __name__ == "__main__":
     p = ProductCQL()
     # a = p.get_product(uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af'))

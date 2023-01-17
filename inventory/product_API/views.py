@@ -63,7 +63,7 @@ class Product(APIView):
 
 class Trashes(APIView):
     def get(self, request):
-        return Response({}, status=223)
+        return Response(p.get_trashes(), status=223)
 
 
 class Trash(APIView):
