@@ -47,7 +47,8 @@ class Product(APIView):
             return Response(data={"dname": ["Invalid Name"]}, status=406)
         except Conflict:
             return Response(
-                data={"error": "Same Product Exists %s\n%s\n%s" % (sp.data.get('pname'), sp.data.get('color'), sp.data.get('required_items'))},
+                data={"error": "Same Product Exists %s\n%s\n%s" % (
+                    sp.data.get('pname'), sp.data.get('color'), sp.data.get('required_items'))},
                 status=409)
         return self.get(request, pid)
 
@@ -58,3 +59,13 @@ class Product(APIView):
             return Response(data={'error': 'Product Not Found %s' % (pid,)},
                             status=404)
         return Response(data=p.product_list(), status=202)
+
+
+class Trashes(APIView):
+    def get(self, request):
+        return Response({}, status=223)
+
+
+class Trash(APIView):
+    def get(self, request, pid):
+        return Response({}, status=221)
