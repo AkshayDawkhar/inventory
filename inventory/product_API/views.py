@@ -53,7 +53,7 @@ class Product(APIView):
 
     def delete(self, request, pid):
         try:
-            p.delete_product(moveto_trash=False, pid=pid)
+            p.delete_product(pid=pid)
         except NotFound:
             return Response(data={'error': 'Product Not Found %s' % (pid,)},
                             status=404)
