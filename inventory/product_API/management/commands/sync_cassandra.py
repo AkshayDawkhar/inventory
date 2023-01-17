@@ -18,7 +18,7 @@ def test_cassandra():
     if rows:
         session.execute(" DROP KEYSPACE IF EXISTS model1 ;")
     session.execute("CREATE KEYSPACE model1 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 } ;")
-    session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_iteams frozen<set <text >> ,PRIMARY KEY (pname , required_iteams, color  )) WITH CLUSTERING ORDER BY (required_iteams ASC ) ;")
+    session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_items frozen<set <text >> ,PRIMARY KEY (pname , required_items, color  )) WITH CLUSTERING ORDER BY (required_items ASC ) ;")
     session.execute("CREATE TABLE IF NOT EXISTS model1.product_list1_by_id (pid uuid PRIMARY KEY,category text,color text,dname text,pname text,required_items frozen<set<text>>)")
     print('done')
     # con = connection.register_connection('cluster', session=sec)
