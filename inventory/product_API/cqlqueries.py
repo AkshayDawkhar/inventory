@@ -44,6 +44,7 @@ class ProductCQL:
     insert_into_trash_query = session.prepare(
         "INSERT INTO trash (pname , required_items , color , category , dname , pid ) VALUES ( ?,?,?, ?, ?, ? ) ;")
     restore_fromTrash_query = session.prepare("SELECT * from trash WHERE pid = ? LIMIT 1;")
+    delete_fromTrash_query = session.prepare("DELETE from trash WHERE pid = ? IF EXISTS;")
     product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
 
     def get_product(self, pid):
@@ -111,18 +112,20 @@ class ProductCQL:
 
     def restore(self,pid):
         a = self.session.execute(self.restore_fromTrash_query, (pid,)).one()
+        self.session.execute(self.delete_fromTrash_query, (pid,))
         # self.create_product(pname=a['pname'],required_items=a['required_items'],color=a['color'],category=a['category'])
-        self.create_product(**a)
+        if a is not None:
+            self.create_product(**a)
 
         
 if __name__ == "__main__":
     p = ProductCQL()
-    a = p.get_product(uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af'))
-    print(a)
+    # a = p.get_product(uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af'))
+    # print(a)
     # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
-    p.session.execute(p.insert_into_trash_query,
-                      ('1', ['row1'], 'red', '12', 'AS12', uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af')))
-    # print(p.prduct_list()) 
+    # p.session.execute(p.insert_into_trash_query,
+    #                   ('1', ['row1'], 'red', '12', 'AS12', uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af')))
+    # # print(p.prduct_list()) 
     # print(p.get_pid('media', 'red', ['row1', 'row2', 'row4', 'row3']))
     # print(p.create_product('media4', ['row1', 'row2', 'row3', 'row5'], 'black', 'category', 'dname'))
     # print(p.update_product(pid=uuid.UUID('9fac422c-942b-11ed-a23f-f889d2e645af'), pname='sounds', color='black',
@@ -131,3 +134,4 @@ if __name__ == "__main__":
     #                        required_items=['row1'], color='black'))
     # print(p.update_product(pid=uuid.UUID('757e0bb6-948f-11ed-900f-f889d2e645af'), pname='m4soound', color='redd',
     #                        required_items=['ROW2'], dname='M4-soound', category='pink
+    p.restore(pid=uuid.UUID('ba4c8576-968b-11ed-8e04-f889d2e645af'))
