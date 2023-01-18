@@ -71,8 +71,11 @@ class Trash(APIView):
         return Response(p.get_trash(pid), status=200)
 
     def post(self, request, pid):
-        p.restore(pid)
-        return Response(data=p.get_trashes(), status=200)
+        try:
+            p.restore(pid)
+            return Response(data=p.get_trashes(), status=200)
+        except Conflict:
+            return Response(data={'error': 'same product Already Exists '}, status=409)
 
     def delete(self, request, pid):
         p.delete_trash(pid)

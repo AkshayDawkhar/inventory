@@ -123,7 +123,14 @@ class ProductCQL:
         self.session.execute(self.delete_Trash_query, (pid,))
         # self.create_product(pname=a['pname'],required_items=a['required_items'],color=a['color'],category=a['category'])
         if a is not None:
-            self.create_product(**a)
+            try:
+                self.get_pid(pname=a['pname'], color=a['color'], required_items=a['required_items'])
+                raise Conflict
+            except NotFound:
+                self.session.execute(self.delete_Trash_query, (pid,))
+                self.create_product(**a)
+        else:
+            raise DatabaseError
 
     def delete_trash(self, pid):
         a = self.session.execute(self.delete_Trash_query, (pid,)).one()['[applied]']
