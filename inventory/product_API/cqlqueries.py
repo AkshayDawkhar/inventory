@@ -44,9 +44,11 @@ class ProductCQL:
     insert_into_trash_query = session.prepare(
         "INSERT INTO trash (pname , required_items , color , category , dname , pid ) VALUES ( ?,?,?, ?, ?, ? ) USING TTL 2592000;")
     restore_fromTrash_query = session.prepare("SELECT * from trash WHERE pid = ? LIMIT 1;")
-    delete_fromTrash_query = session.prepare("DELETE from trash WHERE pid = ? IF EXISTS;")
+    delete_Trash_query = session.prepare("DELETE from trash WHERE pid = ? IF EXISTS;")
     get_trashes_query = session.prepare("SELECT dname,pid,TTL(dname) FROM trash ;")
     product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
+    get_trash_query = session.prepare(
+        "SELECT pid,dname,pname,color,required_items,category,TTL(pname) FROM trash WHERE pid = ? ;")
 
     def get_product(self, pid):
         a = self.session.execute(self.get_product_query, (pid,))
@@ -101,7 +103,7 @@ class ProductCQL:
         gt = self.get_product(pid)
         try:
             gt1 = self.get_pid(pname, color, required_items)
-            if pid != gt1 :
+            if pid != gt1:
                 raise Conflict
         except NotFound:
             pass
@@ -112,16 +114,24 @@ class ProductCQL:
         gtt = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         return gtt.one()
 
-# Trash product
+    # Trash product
     def get_trashes(self):
         return self.session.execute(self.get_trashes_query).all()
 
     def restore(self, pid):
         a = self.session.execute(self.restore_fromTrash_query, (pid,)).one()
-        self.session.execute(self.delete_fromTrash_query, (pid,))
+        self.session.execute(self.delete_Trash_query, (pid,))
         # self.create_product(pname=a['pname'],required_items=a['required_items'],color=a['color'],category=a['category'])
         if a is not None:
             self.create_product(**a)
+
+    def delete_trash(self, pid):
+        a = self.session.execute(self.delete_Trash_query, (pid,)).one()['[applied]']
+        return a
+
+    def get_trash(self, pid):
+        a = self.session.execute(self.get_trash_query, (pid,)).one()
+        return a
 
 
 if __name__ == "__main__":
@@ -140,4 +150,6 @@ if __name__ == "__main__":
     #                        required_items=['row1'], color='black'))
     # print(p.update_product(pid=uuid.UUID('757e0bb6-948f-11ed-900f-f889d2e645af'), pname='m4soound', color='redd',
     #                        required_items=['ROW2'], dname='M4-soound', category='pink
-    p.restore(pid=uuid.UUID('ba4c8576-968b-11ed-8e04-f889d2e645af'))
+    # p.restore(pid=uuid.UUID('ba4c8576-968b-11ed-8e04-f889d2e645af'))
+    # print(p.delete_trash(pid=uuid.UUID('ba4c8576-968b-11ed-8e04-f889d2e645af')))
+    print(p.get_trash(uuid.UUID('49ca02c8-9745-11ed-8318-f889d2e645af')))
