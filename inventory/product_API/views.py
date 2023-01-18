@@ -63,12 +63,17 @@ class Product(APIView):
 
 class Trashes(APIView):
     def get(self, request):
-        return Response(p.get_trashes(), status=223)
+        return Response(p.get_trashes(), status=200)
 
 
 class Trash(APIView):
     def get(self, request, pid):
-        return Response({}, status=221)
-    def post(self,requst,pid):
+        return Response(p.get_trash(pid), status=200)
+
+    def post(self, request, pid):
         p.restore(pid)
-        return Response(data={},status=220)
+        return Response(data=p.get_trashes(), status=200)
+
+    def delete(self, request, pid):
+        p.delete_trash(pid)
+        return Response(data=p.get_trashes(), status=200)
