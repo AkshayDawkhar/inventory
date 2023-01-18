@@ -69,3 +69,6 @@ class Trashes(APIView):
 class Trash(APIView):
     def get(self, request, pid):
         return Response({}, status=221)
+    def post(self,requst,pid):
+        p.restore(pid)
+        return Response(data={},status=220)

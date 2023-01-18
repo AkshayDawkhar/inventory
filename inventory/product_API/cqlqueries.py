@@ -42,10 +42,10 @@ class ProductCQL:
     delete_product_by_id_query = session.prepare(
         "DELETE FROM product_list1_by_id WHERE pid =? IF EXISTS ;")
     insert_into_trash_query = session.prepare(
-        "INSERT INTO trash (pname , required_items , color , category , dname , pid ) VALUES ( ?,?,?, ?, ?, ? ) ;")
+        "INSERT INTO trash (pname , required_items , color , category , dname , pid ) VALUES ( ?,?,?, ?, ?, ? ) USING TTL 2592000;")
     restore_fromTrash_query = session.prepare("SELECT * from trash WHERE pid = ? LIMIT 1;")
     delete_fromTrash_query = session.prepare("DELETE from trash WHERE pid = ? IF EXISTS;")
-    get_trashes_query = session.prepare("SELECT dname,pid FROM trash ;")
+    get_trashes_query = session.prepare("SELECT dname,pid,TTL(dname) FROM trash ;")
     product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
 
     def get_product(self, pid):
