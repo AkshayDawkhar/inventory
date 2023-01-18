@@ -34,7 +34,7 @@ class ProductListSerializer(serializers.Serializer):
     dname = serializers.CharField()
     pname = low(required=False)
     color = serializers.ChoiceField(color_choices, default='black')
-    required_items = serializers.ListField(child=serializers.ChoiceField(required_item_choices))
+    required_items = serializers.ListField(child=serializers.UUIDField())
     category = low()
     pid = serializers.UUIDField()
 
@@ -60,7 +60,7 @@ class CreateProductSerializer(serializers.Serializer):
     pname = low(required=False)
     dname = serializers.CharField()
     color = serializers.ChoiceField(color_choices, default='black')
-    required_items = serializers.ListField(child=serializers.ChoiceField(required_item_choices))
+    required_items = serializers.ListField(child=serializers.UUIDField())
     category = serializers.CharField()
 
     def validate(self, attrs):
@@ -92,7 +92,7 @@ class UpdateProductSerializer(serializers.Serializer):
     pname = low(required=False)
     dname = serializers.CharField()
     color = serializers.ChoiceField(color_choices, default='black')
-    required_items = serializers.ListField(child=serializers.ChoiceField(required_item_choices))
+    required_items = serializers.ListField(child=serializers.UUIDField())
     category = serializers.CharField()
 
     def validate(self, attrs):

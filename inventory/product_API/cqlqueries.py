@@ -115,6 +115,7 @@ class ProductCQL:
 # Trash product
     def get_trashes(self):
         return self.session.execute(self.get_trashes_query).all()
+
     def restore(self, pid):
         a = self.session.execute(self.restore_fromTrash_query, (pid,)).one()
         self.session.execute(self.delete_fromTrash_query, (pid,))
