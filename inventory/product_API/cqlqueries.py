@@ -101,7 +101,8 @@ class ProductCQL:
         gt = self.get_product(pid)
         try:
             gt1 = self.get_pid(pname, color, required_items)
-            raise Conflict
+            if pid != gt1 :
+                raise Conflict
         except NotFound:
             pass
         a = self.session.execute(self.update_by_id_query, (pname, required_items, color, category, dname, pid))
