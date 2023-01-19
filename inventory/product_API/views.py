@@ -68,7 +68,11 @@ class Trashes(APIView):
 
 class Trash(APIView):
     def get(self, request, pid):
-        return Response(p.get_trash(pid), status=200)
+        try:
+            a = p.get_trash(pid)
+            return Response(a, status=200)
+        except NotFound:
+            return Response(data={'error': 'Not Found'}, status=404)
 
     def post(self, request, pid):
         try:

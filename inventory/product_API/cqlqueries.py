@@ -138,6 +138,8 @@ class ProductCQL:
 
     def get_trash(self, pid):
         a = self.session.execute(self.get_trash_query, (pid,)).one()
+        if a is None:
+            raise NotFound
         a['required_items'] = list(a['required_items'])
         return a
 
