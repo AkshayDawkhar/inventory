@@ -76,6 +76,8 @@ class Trash(APIView):
             return Response(data=p.get_trashes(), status=200)
         except Conflict:
             return Response(data={'error': 'same product Already Exists '}, status=409)
+        except DatabaseError:
+            return Response(data={'error': 'Product does not exists in Trash'}, status=404)
 
     def delete(self, request, pid):
         p.delete_trash(pid)
