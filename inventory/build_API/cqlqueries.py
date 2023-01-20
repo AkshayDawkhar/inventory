@@ -2,6 +2,7 @@ from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 import uuid
 
+
 class DatabaseError(Exception):
     """
     The base error that functions in this module will raise when things go
@@ -28,6 +29,7 @@ class BuildCQL:
     session.row_factory = dict_factory
     get_builds_query = session.prepare("SELECT * FROM product_builds ;")
     get_build_query = session.prepare("SELECT * FROM product_builds WHERE pid = ? LIMIT 1;")
+    get_req_items_query = session.prepare("SELECT rid , numbers FROM required_item WHERE pid = ?;")
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -39,8 +41,13 @@ class BuildCQL:
             raise NotFound
         return a
 
+    def get_required_items(self, pid):
+        a = self.session.execute(self.get_req_items_query, (pid,))
+        return a.all()
+
 
 # for testing the query's
 if __name__ == '__main__':
     b = BuildCQL()
-    print(b.get_build(uuid.UUID('b11c39cf-0ced-45ed-88d4-015b9a3d4cfe')))
+    # print(b.get_build(uuid.UUID('b11c39cf-0ced-45ed-88d4-015b9a3d4cfe')))
+    print(b.get_required_items(uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053')))
