@@ -2,6 +2,25 @@ from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 import uuid
 
+class DatabaseError(Exception):
+    """
+    The base error that functions in this module will raise when things go
+    wrong.
+    """
+    pass
+
+
+class NotFound(DatabaseError):
+    pass
+
+
+class Conflict(Exception):
+    pass
+
+
+class InvalidDictionary(DatabaseError):
+    pass
+
 
 class BuildCQL:
     cluster = Cluster(['127.0.0.1'])
@@ -15,8 +34,10 @@ class BuildCQL:
         return a.all()
 
     def get_build(self, pid):
-        a = self.session.execute(self.get_build_query, (pid,))
-        return a.one()
+        a = self.session.execute(self.get_build_query, (pid,)).one()
+        if a is None:
+            raise NotFound
+        return a
 
 
 # for testing the query's

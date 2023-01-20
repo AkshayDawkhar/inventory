@@ -1,7 +1,7 @@
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .cqlqueries import BuildCQL
+from .cqlqueries import BuildCQL, NotFound
 
 b = BuildCQL()
 
@@ -13,4 +13,8 @@ class BuildProducts(APIView):
 
 class BuildProduct(APIView):
     def get(self, request, pid):
-        return Response(data=b.get_build(pid), status=200)
+        try:
+            r = b.get_build(pid)
+        except NotFound:
+            return Response(data={'error': 'product Not Found'}, status=404)
+        return Response(data=r, status=200)
