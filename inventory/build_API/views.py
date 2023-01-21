@@ -1,4 +1,6 @@
 # Create your views here.
+import uuid
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .cqlqueries import BuildCQL, NotFound
@@ -31,6 +33,7 @@ class RequiredItems(APIView):
     def post(self, request):
         s = RequiredItemSerializer(data=request.data)
         if s.is_valid():
+            b.create_required_items(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')), numbers= s.data.get('numbers'))
             return Response(data={}, status=200)
         else:
             return Response(data=s.errors, status=406)
