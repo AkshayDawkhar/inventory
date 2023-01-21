@@ -32,6 +32,7 @@ class BuildCQL:
     get_req_items_query = session.prepare("SELECT rid , numbers FROM required_item WHERE pid = ?;")
     create_required_items_query = session.prepare(
         "INSERT INTO required_item (pid , rid , numbers ) VALUES ( ? , ? , ? ) ;")
+    delete_required_item_query = session.prepare("DELETE from required_item WHERE pid = ? ;")
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -50,6 +51,10 @@ class BuildCQL:
     def create_required_items(self, pid, rid, numbers):
         a = self.session.execute(self.create_required_items_query, (pid, rid, numbers))
         return a
+
+    def delete_required_items(self, pid):
+        self.session.execute(self.delete_required_item_query, (pid,))
+        return
 
 
 # for testing the query's

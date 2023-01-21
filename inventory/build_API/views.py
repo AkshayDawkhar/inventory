@@ -28,12 +28,17 @@ class RequiredItem(APIView):
         a = b.get_required_items(pid)
         return Response(data=a, status=200)
 
+    def delete(self, request, pid):
+        a = b.delete_required_items(pid)
+        return Response(data=a, status=200)
+
 
 class RequiredItems(APIView):
     def post(self, request):
         s = RequiredItemSerializer(data=request.data)
         if s.is_valid():
-            b.create_required_items(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')), numbers= s.data.get('numbers'))
+            b.create_required_items(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')),
+                                    numbers=s.data.get('numbers'))
             return Response(data={}, status=200)
         else:
             return Response(data=s.errors, status=406)
