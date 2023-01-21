@@ -18,3 +18,9 @@ class BuildProduct(APIView):
         except NotFound:
             return Response(data={'error': 'product Not Found'}, status=404)
         return Response(data=r, status=200)
+
+
+class RequiredItem(APIView):
+    def get(self, request, pid):
+        a = b.get_required_items(pid)
+        return Response(data=a, status=200)
