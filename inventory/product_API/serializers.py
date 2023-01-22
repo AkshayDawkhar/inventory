@@ -62,6 +62,7 @@ class CreateProductSerializer(serializers.Serializer):
     color = serializers.ChoiceField(color_choices, default='black')
     required_items = serializers.ListField(child=serializers.UUIDField())
     category = serializers.CharField()
+    required_items_no = serializers.ListField(child=serializers.IntegerField(min_value=1))
 
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
@@ -70,7 +71,7 @@ class CreateProductSerializer(serializers.Serializer):
             raise serializers.ValidationError({'error': 'Already Exist'})
         except DatabaseError:
             p.create_product(pname=attrs['pname'], required_items=attrs['required_items'],
-                             color=attrs['color'], category=attrs['category'], dname=attrs['dname'])
+                             color=attrs['color'], category=attrs['category'], dname=attrs['dname'], required_items_no=attrs['required_items_no'])
             # raise serializers.ValidationError(self.error_massages, code='valid')
         return attrs
 
