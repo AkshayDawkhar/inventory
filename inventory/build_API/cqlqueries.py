@@ -53,9 +53,16 @@ class BuildCQL:
         a = self.session.execute(self.get_req_items_query, (pid,))
         return a.all()
 
-    def create_required_items(self, pid, rid, numbers):
+    def create_required_item(self, pid, rid, numbers):
         a = self.session.execute(self.create_required_items_query, (pid, rid, numbers))
         return a
+
+    def create_required_items(self, pid, rid, numbers):
+        for r, n in zip(rid, numbers):
+            self.create_required_item(pid, r, n)
+            # print(numbers[i])
+        # pass
+        # print(pid, rid, numbers)
 
     def delete_required_items(self, pid):
         self.session.execute(self.delete_required_item_query, (pid,))
@@ -67,5 +74,5 @@ if __name__ == '__main__':
     b = BuildCQL()
     # print(b.get_build(uuid.UUID('b11c39cf-0ced-45ed-88d4-015b9a3d4cfe')))
     # print(b.get_required_items(uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053')))
-    print(b.create_required_items(pid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'),
-                                  rid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'), numbers=233))
+    # print(b.create_required_item(pid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'),
+    #                              rid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'), numbers=233))
