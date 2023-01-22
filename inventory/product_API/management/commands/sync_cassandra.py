@@ -9,7 +9,7 @@ def test_cassandra():
         os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
 
     cluster = Cluster(['127.0.0.1'])
-    session = cluster.connect()
+    session = cluster.connect('model1')
     print('Connected to the db')
     # session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_iteams frozen<set <text >> ,PRIMARY KEY (pname , required_iteams, color  )) WITH CLUSTERING ORDER BY (required_iteams ASC ) ;")
     rows = session.execute(
@@ -21,7 +21,9 @@ def test_cassandra():
     session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_items frozen<set <uuid >> ,PRIMARY KEY (pname , required_items, color  )) WITH CLUSTERING ORDER BY (required_items ASC ) ;")
     session.execute("CREATE TABLE model1.product_list1_by_id (pid uuid PRIMARY KEY, category text, color text, dname text, pname text, required_items frozen<set<uuid >> );")
     session.execute("CREATE TABLE model1.trash (pid uuid PRIMARY KEY, category text, color text, dname text, pname text, required_items frozen<set<uuid >> );")
-
+    session.execute("CREATE TABLE model1.required_item (pid uuid,rid uuid,numbers int,PRIMARY KEY (pid, rid))")
+    session.execute("CREATE TABLE model1.product_builds (pid uuid PRIMARY KEY,building int,instock int,needed int,recommended int)")
+    session.execute("CREATE MATERIALIZED VIEW required_item_by_rid AS SELECT * FROM model1.required_item WHERE pid IS NOT NULL AND rid IS NOT NULL PRIMARY KEY ( rid , pid ) ;")
     print('done')
     # con = connection.register_connection('cluster', session=sec)
     # create_keyspace_simple('model1', 1, connections=['cluster'])
