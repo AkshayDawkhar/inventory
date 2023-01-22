@@ -1,6 +1,9 @@
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 import uuid
+from build_API.cqlqueries import BuildCQL
+
+b = BuildCQL()
 
 
 class DatabaseError(Exception):
@@ -24,6 +27,7 @@ class InvalidDictionary(DatabaseError):
 
 
 class ProductCQL:
+    b = BuildCQL()
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect('model1')
     session.row_factory = dict_factory
@@ -69,12 +73,13 @@ class ProductCQL:
             raise NotFound('product not found')
         return r.one()['pid']
 
-    def create_product(self, pname, required_items, color, category, dname, pid=None):
+    def create_product(self, pname, required_items, color, category, dname,required_items_no, pid=None):
         if not pid: pid = uuid.uuid1()
         r = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         if r.one()['[applied]']:
             r1 = self.session.execute(self.create_by_id_query,
                                       (pid, set(required_items), pname, color, dname, category,))
+            b.create_required_items(pid=pid, rid=set(required_items), numbers=required_items_no)
         return r.one()
 
     def delete_product(self, pid=None, pname=None, required_items=None, color=None, moveto_trash=True,
