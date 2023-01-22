@@ -44,8 +44,8 @@ class RequiredItems(APIView):
     def post(self, request):
         s = RequiredItemSerializer(data=request.data)
         if s.is_valid():
-            b.create_required_items(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')),
-                                    numbers=s.data.get('numbers'))
+            b.create_required_item(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')),
+                                   numbers=s.data.get('numbers'))
             return Response(data={}, status=status.HTTP_200_OK)
         else:
             return Response(data=s.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
