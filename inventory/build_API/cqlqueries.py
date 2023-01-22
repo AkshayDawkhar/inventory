@@ -33,6 +33,7 @@ class BuildCQL:
     create_required_items_query = session.prepare(
         "INSERT INTO required_item (pid , rid , numbers ) VALUES ( ? , ? , ? ) ;")
     delete_required_item_query = session.prepare("DELETE from required_item WHERE pid = ? ;")
+    delete_build_query = session.prepare("DELETE from product_builds WHERE pid = ? IF EXISTS")
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -42,6 +43,10 @@ class BuildCQL:
         a = self.session.execute(self.get_build_query, (pid,)).one()
         if a is None:
             raise NotFound
+        return a
+
+    def delete_build(self, pid):
+        a = self.session.execute(self.delete_build_query, (pid,)).one()['[applied]']
         return a
 
     def get_required_items(self, pid):
