@@ -73,13 +73,16 @@ class ProductCQL:
             raise NotFound('product not found')
         return r.one()['pid']
 
-    def create_product(self, pname, required_items, color, category, dname,required_items_no, pid=None):
+    def create_product(self, pname, required_items, color, category, dname, required_items_no=None, pid=None):
         if not pid: pid = uuid.uuid1()
         r = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         if r.one()['[applied]']:
             r1 = self.session.execute(self.create_by_id_query,
                                       (pid, set(required_items), pname, color, dname, category,))
-            b.create_required_items(pid=pid, rid=set(required_items), numbers=required_items_no)
+            if required_items_no is not None:
+                b.create_required_items(pid=pid, rid=set(required_items), numbers=required_items_no)
+            else:
+                pass
         return r.one()
 
     def delete_product(self, pid=None, pname=None, required_items=None, color=None, moveto_trash=True,
@@ -101,7 +104,7 @@ class ProductCQL:
             # return a
         if removefrom_product_list1:
             a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
-            b.delete_required_items(pid=pid)
+            b.delete_required_items(pid=pid, moveto_trash=moveto_trash)
         return a1.one()['[applied]']
 
     def update_product(self, pid, pname, color, required_items, dname, category):
