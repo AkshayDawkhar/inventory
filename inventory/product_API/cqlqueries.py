@@ -1,6 +1,7 @@
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 import uuid
+# from .reqitem_serializer import RequiredItems
 from build_API.cqlqueries import BuildCQL
 
 b = BuildCQL()
@@ -27,7 +28,6 @@ class InvalidDictionary(DatabaseError):
 
 
 class ProductCQL:
-    b = BuildCQL()
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect('model1')
     session.row_factory = dict_factory
@@ -101,22 +101,23 @@ class ProductCQL:
                 required_items = av['required_items']
                 color = av['color']
             a = self.session.execute(self.delete_product_by_id_query, (pid,))
+            b.delete_required_items(pid=pid, moveto_trash=moveto_trash)
             # return a
         if removefrom_product_list1:
             a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
-            b.delete_required_items(pid=pid, moveto_trash=moveto_trash)
         return a1.one()['[applied]']
 
     def update_product(self, pid, pname, color, required_items, dname, category):
 
         gt = self.get_product(pid)
+        required_items =set([uuid.UUID(r) for r in required_items])
         try:
-            gt1 = self.get_pid(pname, color, required_items)
+            gt1 = self.get_pid(pname, color,required_items)
             if pid != gt1:
                 raise Conflict
         except NotFound:
             pass
-        a = self.session.execute(self.update_by_id_query, (pname, required_items, color, category, dname, pid))
+        a = self.session.execute(self.update_by_id_query, (pname, set(required_items), color, category, dname, pid))
         # FOR deleting the product from product_list1 calling delete product
         tf = self.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt['pname'],
                                  required_items=gt['required_items'], color=gt['color'])
@@ -160,8 +161,10 @@ if __name__ == "__main__":
     # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
     # p.session.execute(p.insert_into_trash_query,
     #                   ('1', ['row1'], 'red', '12', 'AS12', uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af')))
-    # # print(p.prduct_list()) 
-    # print(p.get_pid('media', 'red', ['row1', 'row2', 'row4', 'row3']))
+    # # print(p.prduct_list())
+    # s = RequiredItems(data=['9fac422c-942b-11ed-a23f-f889d2e645af'])
+    l=['9fac422c-942b-11ed-a23f-f889d2e645af','9fac422c-942b-11ed-a23f-f889d2e646af','1fac422c-942b-11ed-a23f-f889d2e645af']
+    print(p.get_pid('media', 'red', [uuid.UUID(uid) for uid in l]))
     # print(p.create_product('media4', ['row1', 'row2', 'row3', 'row5'], 'black', 'category', 'dname'))
     # print(p.update_product(pid=uuid.UUID('9fac422c-942b-11ed-a23f-f889d2e645af'), pname='sounds', color='black',
     #                        required_items=['row2', 'row2'], dname='sounds', category='soundss'))
@@ -171,4 +174,4 @@ if __name__ == "__main__":
     #                        required_items=['ROW2'], dname='M4-soound', category='pink
     # p.restore(pid=uuid.UUID('ba4c8576-968b-11ed-8e04-f889d2e645af'))
     # print(p.delete_trash(pid=uuid.UUID('ba4c8576-968b-11ed-8e04-f889d2e645af')))
-    print(p.get_trash(uuid.UUID('49ca02c8-9745-11ed-8318-f889d2e645af')))
+    # print(p.get_trash(uuid.UUID('49ca02c8-9745-11ed-8318-f889d2e645af')))
