@@ -101,6 +101,7 @@ class ProductCQL:
             # return a
         if removefrom_product_list1:
             a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
+            b.delete_required_items(pid=pid)
         return a1.one()['[applied]']
 
     def update_product(self, pid, pname, color, required_items, dname, category):

@@ -1,6 +1,5 @@
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
-import uuid
 
 
 class DatabaseError(Exception):
@@ -59,7 +58,8 @@ class BuildCQL:
 
     def create_required_items(self, pid, rid, numbers):
         for r, n in zip(rid, numbers):
-            self.create_required_item(pid, r, n)
+            # self.create_required_item(pid, r, n)
+            self.session.execute_async(self.create_required_items_query, (pid, r, n))
             # print(numbers[i])
         # pass
         # print(pid, rid, numbers)
