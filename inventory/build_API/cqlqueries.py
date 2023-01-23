@@ -1,3 +1,5 @@
+import uuid
+
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 
@@ -33,6 +35,8 @@ class BuildCQL:
         "INSERT INTO required_item (pid , rid , numbers ) VALUES ( ? , ? , ? ) ;")
     delete_required_item_query = session.prepare("DELETE from required_item WHERE pid = ? ;")
     delete_build_query = session.prepare("DELETE from product_builds WHERE pid = ? IF EXISTS")
+    insert_required_trash_query = session.prepare(
+        "INSERT INTO required_trash (pid , rid , numbers ) VALUES ( ? , ? , ? ) ;")
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -64,7 +68,15 @@ class BuildCQL:
         # pass
         # print(pid, rid, numbers)
 
-    def delete_required_items(self, pid):
+    def create_required_trashes(self, pid, rid, numbers):
+        for r, n in zip(rid, numbers):
+            self.session.execute_async(self.insert_required_trash_query, (pid, r, n))
+
+    def delete_required_items(self, pid, moveto_trash=True):
+        if moveto_trash:
+            a = self.get_required_items(pid=pid)
+            for i in a:
+                self.session.execute_async(self.insert_required_trash_query, (pid, i['rid'], i['numbers']))
         self.session.execute(self.delete_required_item_query, (pid,))
         return
 
@@ -76,3 +88,6 @@ if __name__ == '__main__':
     # print(b.get_required_items(uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053')))
     # print(b.create_required_item(pid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'),
     #                              rid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'), numbers=233))
+    a = b.get_required_items(pid=uuid.UUID('3bc4555a-9b02-11ed-91a5-f889d2e645af'))
+    for i in a:
+        print(i['numbers'])
