@@ -130,7 +130,8 @@ class ProductCQL:
 
     def restore(self, pid):
         a = self.session.execute(self.restore_fromTrash_query, (pid,)).one()
-        self.session.execute(self.delete_Trash_query, (pid,))
+        ra = b.get_required_trash(pid=pid)
+        # self.session.execute(self.delete_Trash_query, (pid,))
         # self.create_product(pname=a['pname'],required_items=a['required_items'],color=a['color'],category=a['category'])
         if a is not None:
             try:
@@ -138,6 +139,8 @@ class ProductCQL:
                 raise Conflict
             except NotFound:
                 self.session.execute(self.delete_Trash_query, (pid,))
+                b.delete_required_trash(pid=pid)
+                b.create_required_items_by_data(data=ra)
                 self.create_product(**a)
         else:
             raise DatabaseError
