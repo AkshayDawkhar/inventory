@@ -30,6 +30,7 @@ class BuildProduct(APIView):
         else:
             return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+
 class RequiredItem(APIView):
     def get(self, request, pid):
         a = b.get_required_items(pid)
@@ -49,3 +50,9 @@ class RequiredItems(APIView):
             return Response(data={}, status=status.HTTP_200_OK)
         else:
             return Response(data=s.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+class RequiredFor(APIView):
+    def get(self, request, rid):
+        a = b.get_req_items_by_rid(rid=rid)
+        return Response(data=a, status=status.HTTP_200_OK)
