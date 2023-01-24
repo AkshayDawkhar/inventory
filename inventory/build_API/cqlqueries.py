@@ -37,6 +37,8 @@ class BuildCQL:
     delete_build_query = session.prepare("DELETE from product_builds WHERE pid = ? IF EXISTS")
     insert_required_trash_query = session.prepare(
         "INSERT INTO required_trash (pid , rid , numbers ) VALUES ( ? , ? , ? ) ;")
+    get_required_trash_query = session.prepare("SELECT * FROM required_trash WHERE pid = ? ;")
+    delete_required_trash_query = session.prepare("DELETE FROM required_trash WHERE pid = ? ;")
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -68,6 +70,10 @@ class BuildCQL:
         # pass
         # print(pid, rid, numbers)
 
+    def create_required_items_by_data(self, data):
+        for i in data:
+            self.session.execute_async(self.create_required_items_query, (i['pid'], i['rid'], i['numbers']))
+
     def create_required_trashes(self, pid, rid, numbers):
         for r, n in zip(rid, numbers):
             self.session.execute_async(self.insert_required_trash_query, (pid, r, n))
@@ -80,6 +86,14 @@ class BuildCQL:
         self.session.execute(self.delete_required_item_query, (pid,))
         return
 
+    def get_required_trash(self, pid):
+        a = self.session.execute(self.get_required_trash_query, (pid,)).all()
+        self.session.execute_async(self.delete_required_trash_query, (pid,))
+        return a
+
+    def delete_required_trash(self, pid):
+        self.session.execute_async(self.delete_required_trash_query, (pid,))
+
 
 # for testing the query's
 if __name__ == '__main__':
@@ -88,6 +102,8 @@ if __name__ == '__main__':
     # print(b.get_required_items(uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053')))
     # print(b.create_required_item(pid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'),
     #                              rid=uuid.UUID('8ecf1e8e-67f1-4338-bdb9-705887f22053'), numbers=233))
-    a = b.get_required_items(pid=uuid.UUID('3bc4555a-9b02-11ed-91a5-f889d2e645af'))
-    for i in a:
-        print(i['numbers'])
+    # a = b.get_required_items(pid=uuid.UUID('3bc4555a-9b02-11ed-91a5-f889d2e645af'))
+    # for i in a:
+    #     print(i['numbers'])
+    a = b.get_required_trash(uuid.UUID('ee0f9394-9bb8-11ed-b7ed-f889d2e645af'))
+    b.create_required_items(data=a)
