@@ -39,6 +39,7 @@ class BuildCQL:
         "INSERT INTO required_trash (pid , rid , numbers ) VALUES ( ? , ? , ? ) ;")
     get_required_trash_query = session.prepare("SELECT * FROM required_trash WHERE pid = ? ;")
     delete_required_trash_query = session.prepare("DELETE FROM required_trash WHERE pid = ? ;")
+    get_req_items_by_rid_query = session.prepare("SELECT * FROM required_item_by_rid WHERE rid= ? ;")
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -93,6 +94,10 @@ class BuildCQL:
 
     def delete_required_trash(self, pid):
         self.session.execute_async(self.delete_required_trash_query, (pid,))
+
+    def get_req_items_by_rid(self, rid):
+        a = self.session.execute(self.get_req_items_by_rid_query, (rid,)).all()
+        return a
 
 
 # for testing the query's
