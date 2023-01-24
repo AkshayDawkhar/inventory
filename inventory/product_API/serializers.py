@@ -95,6 +95,7 @@ class UpdateProductSerializer(serializers.Serializer):
     color = serializers.ChoiceField(color_choices, default='black')
     required_items = serializers.ListField(child=serializers.UUIDField())
     category = serializers.CharField()
+    required_items_no = serializers.ListField(child=serializers.IntegerField(min_value=1))
 
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())

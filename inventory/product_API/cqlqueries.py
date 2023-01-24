@@ -107,7 +107,7 @@ class ProductCQL:
             a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
         return a1.one()['[applied]']
 
-    def update_product(self, pid, pname, color, required_items, dname, category):
+    def update_product(self, pid, pname, color, required_items, dname, category,required_items_no):
 
         gt = self.get_product(pid)
         required_items =set([uuid.UUID(r) for r in required_items])
@@ -122,6 +122,8 @@ class ProductCQL:
         tf = self.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt['pname'],
                                  required_items=gt['required_items'], color=gt['color'])
         gtt = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
+        b.delete_required_items(pid=pid,moveto_trash=False)
+        b.create_required_items(pid=pid,rid=required_items,numbers=required_items_no)
         return gtt.one()
 
     # Trash product

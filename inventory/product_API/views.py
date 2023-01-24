@@ -38,7 +38,7 @@ class Product(APIView):
             if sp.is_valid():
                 a = p.update_product(pid=pid, pname=sp.data.get('pname'), color=sp.data.get('color'),
                                      required_items=sp.data.get('required_items'), dname=sp.data.get('dname'),
-                                     category=sp.data.get('category'))
+                                     category=sp.data.get('category'),required_items_no=sp.data.get('required_items_no'))
             else:
                 return Response(data=sp.errors, status=status.HTTP_400_BAD_REQUEST)
         except NotFound:
