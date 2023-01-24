@@ -88,7 +88,7 @@ class BuildCQL:
 
     def get_required_trash(self, pid):
         a = self.session.execute(self.get_required_trash_query, (pid,)).all()
-        self.session.execute_async(self.delete_required_trash_query, (pid,))
+        # self.session.execute_async(self.delete_required_trash_query, (pid,))
         return a
 
     def delete_required_trash(self, pid):
