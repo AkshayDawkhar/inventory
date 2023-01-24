@@ -66,6 +66,8 @@ class CreateProductSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         attrs['pname'] = re.sub('[^A-Za-z0-9]+', '', attrs['dname'].lower())
+        if not attrs['pname']:
+            raise InvalidDname
         try:
             pid = p.get_pid(pname=attrs['pname'], color=attrs['color'], required_items=attrs['required_items'])
             raise serializers.ValidationError({'error': 'Already Exist'})

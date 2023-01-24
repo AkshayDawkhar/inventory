@@ -14,9 +14,12 @@ class ProductList(APIView):
     def post(self, request):
         # code for creating product
         sp = CreateProductSerializer(data=request.data)
-        if sp.is_valid():
-            return Response(data=p.product_list())
-        # print(sp.errors)
+        try:
+            if sp.is_valid():
+                return Response(data=p.product_list())
+            # print(sp.errors)
+        except InvalidDname:
+            return Response(data={"dname": ["Invalid Name"]}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         return Response(sp.errors, status=status.HTTP_226_IM_USED if 'error' in sp.errors else status.HTTP_400_BAD_REQUEST)
 
@@ -42,7 +45,7 @@ class Product(APIView):
             else:
                 return Response(data=sp.errors, status=status.HTTP_400_BAD_REQUEST)
         except NotFound:
-            return Response(data={'error': 'Product Not Found %s' % (pid,)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'error': 'Product Not Found %s' % (pid,)}, status=status.HTTP_404_NOT_FOUND)
         except InvalidDname:
             return Response(data={"dname": ["Invalid Name"]}, status=status.HTTP_406_NOT_ACCEPTABLE)
         except Conflict:
