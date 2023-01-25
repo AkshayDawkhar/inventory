@@ -28,6 +28,8 @@ class BuildCQL:
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect('model1')
     session.row_factory = dict_factory
+    create_build_query = session.prepare(
+        "INSERT INTO product_builds (pid , building , instock , needed , recommended ) VALUES ( ?,?,?,?,?) ;")
     get_builds_query = session.prepare("SELECT * FROM product_builds ;")
     get_build_query = session.prepare("SELECT * FROM product_builds WHERE pid = ? LIMIT 1;")
     get_req_items_query = session.prepare("SELECT rid , numbers FROM required_item WHERE pid = ?;")
@@ -40,6 +42,9 @@ class BuildCQL:
     get_required_trash_query = session.prepare("SELECT * FROM required_trash WHERE pid = ? ;")
     delete_required_trash_query = session.prepare("DELETE FROM required_trash WHERE pid = ? ;")
     get_req_items_by_rid_query = session.prepare("SELECT * FROM required_item_by_rid WHERE rid= ? ;")
+
+    def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
+        self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))
 
     def get_builds(self):
         a = self.session.execute(self.get_builds_query)
@@ -110,5 +115,8 @@ if __name__ == '__main__':
     # a = b.get_required_items(pid=uuid.UUID('3bc4555a-9b02-11ed-91a5-f889d2e645af'))
     # for i in a:
     #     print(i['numbers'])
-    a = b.get_required_trash(uuid.UUID('ee0f9394-9bb8-11ed-b7ed-f889d2e645af'))
-    b.create_required_items(data=a)
+    # a = b.get_required_trash(uuid.UUID('ee0f9394-9bb8-11ed-b7ed-f889d2e645af'))
+    # b.create_required_items(data=a)
+    b.create_build(uuid.UUID('1e24dc30-526b-4998-8bf6-671fba9536aa'), instock=12)
+    a = b.get_build(pid=uuid.UUID('2e24dc30-526b-4998-8bf6-671fba9536aa'))
+    print(a['pid'])
