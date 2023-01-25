@@ -3,10 +3,8 @@ from rest_framework.response import Response
 from .cqlqueries import ProductCQL, DatabaseError, NotFound, Conflict
 from .serializers import CreateProductSerializer, UpdateProductSerializer, InvalidDname
 from rest_framework import status
-from build_API.cqlqueries import BuildCQL
 
 p = ProductCQL()
-b = BuildCQL()
 
 
 class ProductList(APIView):
@@ -19,8 +17,6 @@ class ProductList(APIView):
         sp = CreateProductSerializer(data=request.data)
         try:
             if sp.is_valid():
-                pid = p.get_pid(sp.data.get('pname'), sp.data.get('color'),sp.data.get('required_items'))
-                b.create_build(pid=pid)
                 return Response(data=p.product_list())
             # print(sp.errors)
         except InvalidDname:

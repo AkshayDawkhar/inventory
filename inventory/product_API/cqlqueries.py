@@ -74,7 +74,9 @@ class ProductCQL:
         return r.one()['pid']
 
     def create_product(self, pname, required_items, color, category, dname, required_items_no=None, pid=None):
-        if not pid: pid = uuid.uuid1()
+        if not pid:
+            pid = uuid.uuid1()
+            b.create_build(pid=pid)
         r = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
         if r.one()['[applied]']:
             r1 = self.session.execute(self.create_by_id_query,
