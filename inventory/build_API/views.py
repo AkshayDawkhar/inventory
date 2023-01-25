@@ -24,10 +24,11 @@ class BuildProduct(APIView):
         return Response(data=r, status=status.HTTP_200_OK)
 
     def delete(self, request, pid):
-        a = b.delete_build(pid)
-        if a:
-            return Response(data={}, status=201)
-        else:
+        try:
+            a = b.delete_build(pid)
+            if a:
+                return Response(data={}, status=201)
+        except NotFound:
             return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
