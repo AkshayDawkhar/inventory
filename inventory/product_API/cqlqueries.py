@@ -79,6 +79,7 @@ class ProductCQL:
         if r.one()['[applied]']:
             r1 = self.session.execute(self.create_by_id_query,
                                       (pid, set(required_items), pname, color, dname, category,))
+            # b.create_build(pid=pid)
             if required_items_no is not None:
                 b.create_required_items(pid=pid, rid=set(required_items), numbers=required_items_no)
             else:
@@ -107,12 +108,12 @@ class ProductCQL:
             a1 = self.session.execute(self.delete_product_query, (pname, set(required_items), color))
         return a1.one()['[applied]']
 
-    def update_product(self, pid, pname, color, required_items, dname, category,required_items_no):
+    def update_product(self, pid, pname, color, required_items, dname, category, required_items_no):
 
         gt = self.get_product(pid)
-        required_items =set([uuid.UUID(r) for r in required_items])
+        required_items = set([uuid.UUID(r) for r in required_items])
         try:
-            gt1 = self.get_pid(pname, color,required_items)
+            gt1 = self.get_pid(pname, color, required_items)
             if pid != gt1:
                 raise Conflict
         except NotFound:
@@ -122,8 +123,8 @@ class ProductCQL:
         tf = self.delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt['pname'],
                                  required_items=gt['required_items'], color=gt['color'])
         gtt = self.session.execute(self.create_product_query, (pname, set(required_items), color, category, dname, pid))
-        b.delete_required_items(pid=pid,moveto_trash=False)
-        b.create_required_items(pid=pid,rid=required_items,numbers=required_items_no)
+        b.delete_required_items(pid=pid, moveto_trash=False)
+        b.create_required_items(pid=pid, rid=required_items, numbers=required_items_no)
         return gtt.one()
 
     # Trash product
@@ -168,7 +169,8 @@ if __name__ == "__main__":
     #                   ('1', ['row1'], 'red', '12', 'AS12', uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af')))
     # # print(p.prduct_list())
     # s = RequiredItems(data=['9fac422c-942b-11ed-a23f-f889d2e645af'])
-    l=['9fac422c-942b-11ed-a23f-f889d2e645af','9fac422c-942b-11ed-a23f-f889d2e646af','1fac422c-942b-11ed-a23f-f889d2e645af']
+    l = ['9fac422c-942b-11ed-a23f-f889d2e645af', '9fac422c-942b-11ed-a23f-f889d2e646af',
+         '1fac422c-942b-11ed-a23f-f889d2e645af']
     print(p.get_pid('media', 'red', [uuid.UUID(uid) for uid in l]))
     # print(p.create_product('media4', ['row1', 'row2', 'row3', 'row5'], 'black', 'category', 'dname'))
     # print(p.update_product(pid=uuid.UUID('9fac422c-942b-11ed-a23f-f889d2e645af'), pname='sounds', color='black',
