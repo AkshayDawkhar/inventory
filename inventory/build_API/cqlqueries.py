@@ -42,6 +42,8 @@ class BuildCQL:
     get_required_trash_query = session.prepare("SELECT * FROM required_trash WHERE pid = ? ;")
     delete_required_trash_query = session.prepare("DELETE FROM required_trash WHERE pid = ? ;")
     get_req_items_by_rid_query = session.prepare("SELECT * FROM required_item_by_rid WHERE rid= ? ;")
+    insert_build_trash_query = session.prepare(
+        "INSERT INTO product_builds_trash (pid , building , instock, needed , recommended ) VALUES ( ?,?,?,?,? ) ;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
         self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))
@@ -56,7 +58,11 @@ class BuildCQL:
             raise NotFound
         return a
 
-    def delete_build(self, pid):
+    def delete_build(self, pid, moveto_trash=True):
+        if moveto_trash:
+            a = self.get_build(pid=pid)
+            self.session.execute(self.insert_build_trash_query,
+                                 (pid, a['building'], a['instock'], a['needed'], a['recommended']))
         a = self.session.execute(self.delete_build_query, (pid,)).one()['[applied]']
         return a
 
