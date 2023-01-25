@@ -3,7 +3,10 @@ from rest_framework.response import Response
 from .cqlqueries import ProductCQL, DatabaseError, NotFound, Conflict
 from .serializers import CreateProductSerializer, UpdateProductSerializer, InvalidDname
 from rest_framework import status
+from build_API.cqlqueries import BuildCQL
+
 p = ProductCQL()
+b = BuildCQL()
 
 
 class ProductList(APIView):
@@ -16,12 +19,15 @@ class ProductList(APIView):
         sp = CreateProductSerializer(data=request.data)
         try:
             if sp.is_valid():
+                pid = p.get_pid(sp.data.get('pname'), sp.data.get('color'),sp.data.get('required_items'))
+                b.create_build(pid=pid)
                 return Response(data=p.product_list())
             # print(sp.errors)
         except InvalidDname:
             return Response(data={"dname": ["Invalid Name"]}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        return Response(sp.errors, status=status.HTTP_226_IM_USED if 'error' in sp.errors else status.HTTP_400_BAD_REQUEST)
+        return Response(sp.errors,
+                        status=status.HTTP_226_IM_USED if 'error' in sp.errors else status.HTTP_400_BAD_REQUEST)
 
 
 class Product(APIView):
@@ -41,7 +47,8 @@ class Product(APIView):
             if sp.is_valid():
                 a = p.update_product(pid=pid, pname=sp.data.get('pname'), color=sp.data.get('color'),
                                      required_items=sp.data.get('required_items'), dname=sp.data.get('dname'),
-                                     category=sp.data.get('category'),required_items_no=sp.data.get('required_items_no'))
+                                     category=sp.data.get('category'),
+                                     required_items_no=sp.data.get('required_items_no'))
             else:
                 return Response(data=sp.errors, status=status.HTTP_400_BAD_REQUEST)
         except NotFound:
