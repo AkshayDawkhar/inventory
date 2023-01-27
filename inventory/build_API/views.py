@@ -26,7 +26,7 @@ class BuildProduct(APIView):
     def post(self, request, pid):
         bs = BuildProductSerializer(data=request.data)
         if bs.is_valid():
-            b.build_product(pid)
+            b.build_product(pid, numbers=bs.data.get('build_no'))
             return self.get(request, pid)
         else:
             return Response(data=bs.errors, status=status.HTTP_400_BAD_REQUEST)

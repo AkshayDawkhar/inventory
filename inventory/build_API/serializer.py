@@ -8,4 +8,4 @@ class RequiredItemSerializer(serializers.Serializer):
 
 
 class BuildProductSerializer(serializers.Serializer):
-    build_no = serializers.IntegerField()
+    build_no = serializers.IntegerField(min_value=1)
