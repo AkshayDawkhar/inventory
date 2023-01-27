@@ -4,7 +4,7 @@ import uuid
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .cqlqueries import BuildCQL, NotFound
-from .serializer import RequiredItemSerializer
+from .serializer import RequiredItemSerializer, BuildProductSerializer
 from rest_framework import status
 
 b = BuildCQL()
@@ -24,8 +24,13 @@ class BuildProduct(APIView):
         return Response(data=r, status=status.HTTP_200_OK)
 
     def post(self, request, pid):
-        b.build_product(pid)
-        return self.get(request, pid)
+        bs = BuildProductSerializer(data=request.data)
+        if bs.is_valid():
+            b.build_product(pid)
+            return self.get(request, pid)
+        else:
+            return Response(data=bs.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pid):
         try:
             a = b.delete_build(pid)
