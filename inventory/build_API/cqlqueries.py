@@ -69,8 +69,15 @@ class BuildCQL:
 
     def build_product(self, pid, numbers=1):
         a = self.get_build(pid)
-        self.session.execute(self.update_build, (a['building'] + numbers, pid))
+        numbers = a['building'] + numbers
+        self.session.execute(self.update_build, (numbers, pid))
         # self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
+
+    def discard_product(self, pid, numbers=1):
+        a = self.get_build(pid)
+        numbers = a['building'] - numbers
+        self.session.execute(self.update_build, (numbers, pid))
+
 
     def get_required_items(self, pid):
         a = self.session.execute(self.get_req_items_query, (pid,))
