@@ -23,6 +23,9 @@ class BuildProduct(APIView):
             return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
         return Response(data=r, status=status.HTTP_200_OK)
 
+    def post(self, request, pid):
+        b.build_product(pid)
+        return self.get(request, pid)
     def delete(self, request, pid):
         try:
             a = b.delete_build(pid)
