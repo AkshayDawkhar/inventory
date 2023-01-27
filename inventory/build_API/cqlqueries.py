@@ -44,6 +44,7 @@ class BuildCQL:
     get_req_items_by_rid_query = session.prepare("SELECT * FROM required_item_by_rid WHERE rid= ? ;")
     insert_build_trash_query = session.prepare(
         "INSERT INTO product_builds_trash (pid , building , instock, needed , recommended ) VALUES ( ?,?,?,?,? ) ;")
+    update_build = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ?;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
         self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))
@@ -66,9 +67,10 @@ class BuildCQL:
         a = self.session.execute(self.delete_build_query, (pid,)).one()['[applied]']
         return a
 
-    def build_product(self, pid):
+    def build_product(self, pid, numbers=1):
         a = self.get_build(pid)
-        self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
+        self.session.execute(self.update_build, (a['building'] + numbers, pid))
+        # self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
 
     def get_required_items(self, pid):
         a = self.session.execute(self.get_req_items_query, (pid,))
