@@ -9,3 +9,7 @@ class RequiredItemSerializer(serializers.Serializer):
 
 class BuildProductSerializer(serializers.Serializer):
     build_no = serializers.IntegerField(min_value=1)
+
+
+class DiscardProductSerializer(serializers.Serializer):
+    discard_no = serializers.IntegerField(min_value=1)
