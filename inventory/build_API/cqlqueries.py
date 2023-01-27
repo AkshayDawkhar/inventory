@@ -66,6 +66,10 @@ class BuildCQL:
         a = self.session.execute(self.delete_build_query, (pid,)).one()['[applied]']
         return a
 
+    def build_product(self, pid):
+        a = self.get_build(pid)
+        self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
+
     def get_required_items(self, pid):
         a = self.session.execute(self.get_req_items_query, (pid,))
         return a.all()
@@ -123,6 +127,8 @@ if __name__ == '__main__':
     #     print(i['numbers'])
     # a = b.get_required_trash(uuid.UUID('ee0f9394-9bb8-11ed-b7ed-f889d2e645af'))
     # b.create_required_items(data=a)
-    b.create_build(uuid.UUID('1e24dc30-526b-4998-8bf6-671fba9536aa'), instock=12)
-    a = b.get_build(pid=uuid.UUID('2e24dc30-526b-4998-8bf6-671fba9536aa'))
-    print(a['pid'])
+    # b.create_build(uuid.UUID('1e24dc30-526b-4998-8bf6-671fba9536aa'), instock=12)
+    # a = b.get_build(pid=uuid.UUID('2e24dc30-526b-4998-8bf6-671fba9536aa'))
+    # print(a['pid'])
+    b.build_product(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af'))
+    print(b.get_build(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
