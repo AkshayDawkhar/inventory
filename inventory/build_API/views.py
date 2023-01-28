@@ -40,6 +40,8 @@ class BuildProduct(APIView):
             except InvalidNumber:
                 return Response(data={'discard_no': ["Ensure this value is less than or equal to level ."]},
                                 status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            except NotFound:
+                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -92,7 +94,7 @@ class Stock(APIView):
                 return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
                                 status=status.HTTP_422_UNPROCESSABLE_ENTITY)
             except NotFound:
-                return Response(data={}, status=status.HTTP_404_NOT_FOUND)
+                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -107,7 +109,7 @@ class Stock(APIView):
                 return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
                                 status=status.HTTP_422_UNPROCESSABLE_ENTITY)
             except NotFound:
-                return Response(data={}, status=status.HTTP_404_NOT_FOUND)
+                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
         else:
             return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
