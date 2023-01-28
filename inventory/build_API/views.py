@@ -4,7 +4,7 @@ import uuid
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .cqlqueries import BuildCQL, NotFound, InvalidNumber
-from .serializer import RequiredItemSerializer, BuildProductSerializer, DiscardProductSerializer
+from .serializer import RequiredItemSerializer, BuildProductSerializer, DiscardProductSerializer, StockProductSerialzer
 from rest_framework import status
 
 b = BuildCQL()
@@ -38,7 +38,8 @@ class BuildProduct(APIView):
                 b.discard_product(pid, numbers=ds.data.get('discard_no'))
                 return self.get(request, pid)
             except InvalidNumber:
-                return Response(data={'discard_no': ["Ensure this value is less than or equal to level ."]}, status=status.HTTP_422_UNPROCESSABLE_ENTITY )
+                return Response(data={'discard_no': ["Ensure this value is less than or equal to level ."]},
+                                status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         else:
             return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -76,3 +77,13 @@ class RequiredFor(APIView):
     def get(self, request, rid):
         a = b.get_req_items_by_rid(rid=rid)
         return Response(data=a, status=status.HTTP_200_OK)
+
+
+class Stock(APIView):
+    def post(self, request, pid):
+        ss = StockProductSerialzer(data=request.data)
+        if ss.is_valid():
+            a = b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
+            return Response(data=b.get_build(pid), status=status.HTTP_226_IM_USED)
+        else:
+            return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -13,3 +13,7 @@ class BuildProductSerializer(serializers.Serializer):
 
 class DiscardProductSerializer(serializers.Serializer):
     discard_no = serializers.IntegerField(min_value=1)
+
+
+class StockProductSerialzer(serializers.Serializer):
+    stock_no = serializers.IntegerField(min_value=1)
