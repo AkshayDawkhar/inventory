@@ -48,6 +48,7 @@ class BuildCQL:
     get_req_items_by_rid_query = session.prepare("SELECT * FROM required_item_by_rid WHERE rid= ? ;")
     insert_build_trash_query = session.prepare(
         "INSERT INTO product_builds_trash (pid , building , instock, needed , recommended ) VALUES ( ?,?,?,?,? ) ;")
+    get_building_query = session.prepare("SELECT building FROM product_builds WHERE pid = ? LIMIT 1;")
     update_build = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ?;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
@@ -62,6 +63,12 @@ class BuildCQL:
         if a is None:
             raise NotFound
         return a
+
+    def get_building(self, pid):
+        a = self.session.execute(self.get_building_query, (pid,)).one()
+        if not a:
+            return 0
+        return a['building']
 
     def delete_build(self, pid, moveto_trash=True):
         if moveto_trash:
@@ -145,5 +152,6 @@ if __name__ == '__main__':
     # b.create_build(uuid.UUID('1e24dc30-526b-4998-8bf6-671fba9536aa'), instock=12)
     # a = b.get_build(pid=uuid.UUID('2e24dc30-526b-4998-8bf6-671fba9536aa'))
     # print(a['pid'])
-    b.build_product(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af'))
-    print(b.get_build(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
+    # b.build_product(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af'))
+    # print(b.get_build(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
+    print(b.get_building(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
