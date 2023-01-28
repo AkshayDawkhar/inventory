@@ -38,7 +38,7 @@ class BuildProduct(APIView):
                 b.discard_product(pid, numbers=ds.data.get('discard_no'))
                 return self.get(request, pid)
             except InvalidNumber:
-                return Response(data={'discard_no': ["Ensure this value is less than or equal."]}, status=status.HTTP_422_UNPROCESSABLE_ENTITY )
+                return Response(data={'discard_no': ["Ensure this value is less than or equal to level ."]}, status=status.HTTP_422_UNPROCESSABLE_ENTITY )
         else:
             return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
 

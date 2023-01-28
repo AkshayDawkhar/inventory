@@ -49,7 +49,9 @@ class BuildCQL:
     insert_build_trash_query = session.prepare(
         "INSERT INTO product_builds_trash (pid , building , instock, needed , recommended ) VALUES ( ?,?,?,?,? ) ;")
     get_building_query = session.prepare("SELECT building FROM product_builds WHERE pid = ? LIMIT 1;")
+    get_stock_query = session.prepare("SELECT instock FROM product_builds WHERE pid = ? LIMIT 1;")
     update_build = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ?;")
+    update_stock = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? ;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
         self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))
@@ -70,6 +72,12 @@ class BuildCQL:
             return 0
         return a['building']
 
+    def get_stock(self, pid):
+        a = self.session.execute(self.get_stock_query, (pid,)).one()
+        if not a:
+            return 0
+        return a['instock']
+
     def delete_build(self, pid, moveto_trash=True):
         if moveto_trash:
             a = self.get_build(pid=pid)
@@ -79,8 +87,8 @@ class BuildCQL:
         return a
 
     def build_product(self, pid, numbers=1):
-        a = self.get_build(pid)
-        numbers = a['building'] + numbers
+        a = self.get_building(pid)
+        numbers = a + numbers
         self.session.execute(self.update_build, (numbers, pid))
         # self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
 
@@ -91,6 +99,11 @@ class BuildCQL:
             self.session.execute(self.update_build, (numbers, pid))
         else:
             raise InvalidNumber
+
+    def add_stock(self, pid, numbers):
+        a = self.get_stock(pid)
+        numbers = a + numbers
+        self.session.execute(self.update_stock, (numbers, pid))
 
     def get_required_items(self, pid):
         a = self.session.execute(self.get_req_items_query, (pid,))
@@ -154,4 +167,6 @@ if __name__ == '__main__':
     # print(a['pid'])
     # b.build_product(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af'))
     # print(b.get_build(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
-    print(b.get_building(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
+    # print(b.get_building(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
+    b.add_stock(pid=uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af'), numbers=212)
+    print(b.get_build(uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af')))
