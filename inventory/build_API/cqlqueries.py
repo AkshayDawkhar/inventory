@@ -50,8 +50,8 @@ class BuildCQL:
         "INSERT INTO product_builds_trash (pid , building , instock, needed , recommended ) VALUES ( ?,?,?,?,? ) ;")
     get_building_query = session.prepare("SELECT building FROM product_builds WHERE pid = ? LIMIT 1;")
     get_stock_query = session.prepare("SELECT instock FROM product_builds WHERE pid = ? LIMIT 1;")
-    update_build = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ?;")
-    update_stock = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? ;")
+    update_build = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ? IF EXISTS ;")
+    update_stock = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? IF EXISTS ;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
         self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))

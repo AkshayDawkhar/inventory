@@ -84,12 +84,15 @@ class Stock(APIView):
         ss = StockProductSerialzer(data=request.data)
         if ss.is_valid():
             try:
-                a = b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
-                return Response(data=b.get_build(pid), status=status.HTTP_226_IM_USED)
+                a = b.get_build(pid=pid)
+                b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
+
+                return Response(data=a, status=status.HTTP_226_IM_USED)
             except InvalidNumber:
                 return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
                                 status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-
+            except NotFound:
+                return Response(data={}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,11 +100,14 @@ class Stock(APIView):
         ss = StockProductSerialzer(data=request.data)
         if ss.is_valid():
             try:
+                a = b.get_build(pid)
                 b.discard_stock(pid=pid, numbers=ss.data.get('stock_no'))
-                return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
+                return Response(data=a, status=status.HTTP_200_OK)
             except InvalidNumber:
                 return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
                                 status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            except NotFound:
+                return Response(data={}, status=status.HTTP_404_NOT_FOUND)
 
         else:
-            return Response(data=ss.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
