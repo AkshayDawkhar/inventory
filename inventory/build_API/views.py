@@ -3,7 +3,7 @@ import uuid
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .cqlqueries import BuildCQL, NotFound
+from .cqlqueries import BuildCQL, NotFound, InvalidNumber
 from .serializer import RequiredItemSerializer, BuildProductSerializer, DiscardProductSerializer
 from rest_framework import status
 
@@ -34,8 +34,11 @@ class BuildProduct(APIView):
     def put(self, request, pid):
         ds = DiscardProductSerializer(data=request.data)
         if ds.is_valid():
-            b.discard_product(pid, numbers=ds.data.get('discard_no'))
-            return self.get(request, pid)
+            try:
+                b.discard_product(pid, numbers=ds.data.get('discard_no'))
+                return self.get(request, pid)
+            except InvalidNumber:
+                return Response(data={'discard_no': ["Ensure this value is less than or equal."]}, status=status.HTTP_422_UNPROCESSABLE_ENTITY )
         else:
             return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -24,6 +24,10 @@ class InvalidDictionary(DatabaseError):
     pass
 
 
+class InvalidNumber(Exception):
+    pass
+
+
 class BuildCQL:
     cluster = Cluster(['127.0.0.1'])
     session = cluster.connect('model1')
@@ -76,8 +80,10 @@ class BuildCQL:
     def discard_product(self, pid, numbers=1):
         a = self.get_build(pid)
         numbers = a['building'] - numbers
-        self.session.execute(self.update_build, (numbers, pid))
-
+        if numbers >= 0:
+            self.session.execute(self.update_build, (numbers, pid))
+        else:
+            raise InvalidNumber
 
     def get_required_items(self, pid):
         a = self.session.execute(self.get_req_items_query, (pid,))
