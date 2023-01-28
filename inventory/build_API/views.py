@@ -83,7 +83,25 @@ class Stock(APIView):
     def post(self, request, pid):
         ss = StockProductSerialzer(data=request.data)
         if ss.is_valid():
-            a = b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
-            return Response(data=b.get_build(pid), status=status.HTTP_226_IM_USED)
+            try:
+                a = b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
+                return Response(data=b.get_build(pid), status=status.HTTP_226_IM_USED)
+            except InvalidNumber:
+                return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
+                                status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
         else:
             return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pid):
+        ss = StockProductSerialzer(data=request.data)
+        if ss.is_valid():
+            try:
+                b.discard_stock(pid=pid, numbers=ss.data.get('stock_no'))
+                return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
+            except InvalidNumber:
+                return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
+                                status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+        else:
+            return Response(data=ss.errors,status=status.HTTP_400_BAD_REQUEST)

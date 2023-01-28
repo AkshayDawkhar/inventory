@@ -105,6 +105,14 @@ class BuildCQL:
         numbers = a + numbers
         self.session.execute(self.update_stock, (numbers, pid))
 
+    def discard_stock(self, pid, numbers):
+        a = self.get_stock(pid)
+        numbers = a - numbers
+        if numbers >= 0:
+            self.session.execute(self.update_stock, (numbers, pid))
+        else:
+            raise InvalidNumber
+
     def get_required_items(self, pid):
         a = self.session.execute(self.get_req_items_query, (pid,))
         return a.all()
