@@ -86,9 +86,8 @@ class Stock(APIView):
         ss = StockProductSerialzer(data=request.data)
         if ss.is_valid():
             try:
-                a = b.get_build(pid=pid)
                 b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
-
+                a = b.get_build(pid=pid)
                 return Response(data=a, status=status.HTTP_226_IM_USED)
             except InvalidNumber:
                 return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
@@ -102,8 +101,8 @@ class Stock(APIView):
         ss = StockProductSerialzer(data=request.data)
         if ss.is_valid():
             try:
-                a = b.get_build(pid)
                 b.discard_stock(pid=pid, numbers=ss.data.get('stock_no'))
+                a = b.get_build(pid)
                 return Response(data=a, status=status.HTTP_200_OK)
             except InvalidNumber:
                 return Response(data={'stock_no': ["Ensure this value is less than or equal to level ."]},
