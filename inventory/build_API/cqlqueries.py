@@ -173,6 +173,12 @@ class BuildCQL:
         if max is not None and max >= numbers:
             self.build_product(pid, numbers)
 
+    def safe_discard(self, pid, numbers):
+        building = self.get_building(pid)
+        if numbers <= building:
+            self.discard_product(pid, numbers)
+            print('valid to discard')
+
 
 # for testing the query's
 if __name__ == '__main__':
@@ -196,4 +202,5 @@ if __name__ == '__main__':
     # print(b.get_build(uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af')))
     # print(b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af')))
     # maxbuilds = b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'))
-    b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
+    # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
+    b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
