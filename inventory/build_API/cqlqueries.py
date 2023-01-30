@@ -157,6 +157,20 @@ class BuildCQL:
         a = self.session.execute(self.get_req_items_by_rid_query, (rid,)).all()
         return a
 
+    def get_max_builds(self, pid):
+        r = self.get_required_items(pid)
+        # a = sys.maxsize
+        # print(a)
+        a = None
+        for i in r:
+            m = self.get_stock(i['rid']) // i['numbers']
+            if a is None:
+                a = m
+            else:
+                a = min(a, m)
+            print(a)
+        return a
+
 
 # for testing the query's
 if __name__ == '__main__':
@@ -176,5 +190,6 @@ if __name__ == '__main__':
     # b.build_product(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af'))
     # print(b.get_build(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
     # print(b.get_building(uuid.UUID('c8147014-9cc7-11ed-9a52-f889d2e645af')))
-    b.add_stock(pid=uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af'), numbers=212)
-    print(b.get_build(uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af')))
+    # b.add_stock(pid=uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af'), numbers=212)
+    # print(b.get_build(uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af')))
+    print(b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af')))
