@@ -176,6 +176,9 @@ class BuildCQL:
     def safe_discard(self, pid, numbers):
         building = self.get_building(pid)
         if numbers <= building:
+            items = self.get_required_items(pid)
+            for i in items:
+                self.add_stock(pid=i['rid'], numbers=i['numbers'] * numbers)
             self.discard_product(pid, numbers)
             print('valid to discard')
 
@@ -203,4 +206,4 @@ if __name__ == '__main__':
     # print(b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af')))
     # maxbuilds = b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'))
     # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
-    b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
+    b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=5)
