@@ -50,8 +50,8 @@ class BuildCQL:
         "INSERT INTO product_builds_trash (pid , building , instock, needed , recommended ) VALUES ( ?,?,?,?,? ) ;")
     get_building_query = session.prepare("SELECT building FROM product_builds WHERE pid = ? LIMIT 1;")
     get_stock_query = session.prepare("SELECT instock FROM product_builds WHERE pid = ? LIMIT 1;")
-    update_build = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ? IF EXISTS ;")
-    update_stock = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? IF EXISTS ;")
+    update_build_query = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ? IF EXISTS ;")
+    update_stock_query = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? IF EXISTS ;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
         self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))
@@ -89,27 +89,27 @@ class BuildCQL:
     def build_product(self, pid, numbers=1):
         a = self.get_building(pid)
         numbers = a + numbers
-        self.session.execute(self.update_build, (numbers, pid))
+        self.session.execute(self.update_build_query, (numbers, pid))
         # self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
 
     def discard_product(self, pid, numbers=1):
         a = self.get_build(pid)
         numbers = a['building'] - numbers
         if numbers >= 0:
-            self.session.execute(self.update_build, (numbers, pid))
+            self.session.execute(self.update_build_query, (numbers, pid))
         else:
             raise InvalidNumber
 
     def add_stock(self, pid, numbers):
         a = self.get_stock(pid)
         numbers = a + numbers
-        self.session.execute(self.update_stock, (numbers, pid))
+        self.session.execute(self.update_stock_query, (numbers, pid))
 
     def discard_stock(self, pid, numbers):
         a = self.get_stock(pid)
         numbers = a - numbers
         if numbers >= 0:
-            self.session.execute(self.update_stock, (numbers, pid))
+            self.session.execute(self.update_stock_query, (numbers, pid))
         else:
             raise InvalidNumber
 
