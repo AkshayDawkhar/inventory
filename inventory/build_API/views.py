@@ -112,3 +112,9 @@ class Stock(APIView):
 
         else:
             return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetMax(APIView):
+    def get(self, request, pid):
+        a = b.get_max_builds(pid)
+        return Response(a, status=status.HTTP_200_OK)
