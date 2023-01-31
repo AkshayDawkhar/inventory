@@ -54,6 +54,22 @@ class EditBuildProduct(APIView):
             return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class BuildProduct(APIView):
+    def get(self, request, pid):
+        a = b.get_max_builds(pid)
+        return Response(a, status=status.HTTP_200_OK)
+
+    def post(self, request, pid):
+        serializer = BuildProductSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                b.safe_build(pid, serializer.data.get('build_no'))
+                return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
+            except NotFound:
+                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(data=serializer.errors, status=status.HTTP_200_OK)
+
+
 class RequiredItem(APIView):
     def get(self, request, pid):
         a = b.get_required_items(pid)
