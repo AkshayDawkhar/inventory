@@ -67,7 +67,15 @@ class BuildProduct(APIView):
                 return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
             except NotFound:
                 return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
-        return Response(data=serializer.errors, status=status.HTTP_200_OK)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pid):
+        serializer = DiscardProductSerializer(data=request.data)
+        if serializer.is_valid():
+            b.safe_discard(pid, serializer.data.get('discard_no'))
+            return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class RequiredItem(APIView):
