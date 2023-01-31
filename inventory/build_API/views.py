@@ -15,7 +15,7 @@ class BuildProducts(APIView):
         return Response(data=b.get_builds(), status=status.HTTP_200_OK)
 
 
-class BuildProduct(APIView):
+class EditBuildProduct(APIView):
     def get(self, request, pid):
         try:
             r = b.get_build(pid)
