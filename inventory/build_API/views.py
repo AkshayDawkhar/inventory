@@ -77,7 +77,6 @@ class BuildProduct(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class RequiredItem(APIView):
     def get(self, request, pid):
         a = b.get_required_items(pid)

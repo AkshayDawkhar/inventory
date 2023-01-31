@@ -175,6 +175,9 @@ class BuildCQL:
             for i in items:
                 self.discard_stock(pid=i['rid'], numbers=i['numbers'] * numbers)
             self.build_product(pid, numbers)
+            return numbers
+        elif max <= numbers:
+            return max - numbers
 
     def safe_discard(self, pid, numbers):
         building = self.get_building(pid)
@@ -183,7 +186,10 @@ class BuildCQL:
             for i in items:
                 self.add_stock(pid=i['rid'], numbers=i['numbers'] * numbers)
             self.discard_product(pid, numbers)
-            print('valid to discard')
+            # print('valid to discard')
+            return numbers
+        else:
+            return building - numbers
 
 
 # for testing the query's
