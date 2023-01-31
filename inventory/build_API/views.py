@@ -62,8 +62,12 @@ class BuildProduct(APIView):
     def post(self, request, pid):
         serializer = BuildProductSerializer(data=request.data)
         if serializer.is_valid():
+            numbers = serializer.data.get('build_no')
             try:
-                b.safe_build(pid, serializer.data.get('build_no'))
+                build = b.safe_build(pid, numbers)
+                if build < 0:
+                    return Response(data={'error': 'max build value is %d' % (numbers + build)},
+                                    status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
                 return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
             except NotFound:
                 return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -72,7 +76,11 @@ class BuildProduct(APIView):
     def delete(self, request, pid):
         serializer = DiscardProductSerializer(data=request.data)
         if serializer.is_valid():
-            b.safe_discard(pid, serializer.data.get('discard_no'))
+            numbers = serializer.data.get('discard_no')
+            build = b.safe_discard(pid, numbers)
+            if build < 0:
+                return Response(data={'error': 'max build value is %d' % (numbers + build)},
+                                status=status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE)
             return Response(data=b.get_build(pid), status=status.HTTP_200_OK)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
