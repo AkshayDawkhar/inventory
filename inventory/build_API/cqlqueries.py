@@ -171,6 +171,9 @@ class BuildCQL:
     def safe_build(self, pid, numbers):
         max = self.get_max_builds(pid)
         if max is not None and max >= numbers:
+            items = self.get_required_items(pid)
+            for i in items:
+                self.discard_stock(pid=i['rid'], numbers=i['numbers'] * numbers)
             self.build_product(pid, numbers)
 
     def safe_discard(self, pid, numbers):
@@ -205,5 +208,5 @@ if __name__ == '__main__':
     # print(b.get_build(uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af')))
     # print(b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af')))
     # maxbuilds = b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'))
-    # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
-    b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=5)
+    b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
+    # b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
