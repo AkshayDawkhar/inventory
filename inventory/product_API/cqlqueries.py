@@ -96,6 +96,7 @@ class ProductCQL:
             # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
             self.session.execute(self.insert_into_trash_query, (
                 it['pname'], it['required_items'], it['color'], it['category'], it['dname'], it['pid']))
+            b.delete_build(pid=pid, moveto_trash=moveto_trash)
 
         if removefrom_product_list1_by_id:
             if pname is None:
