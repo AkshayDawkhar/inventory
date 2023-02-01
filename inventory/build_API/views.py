@@ -16,6 +16,7 @@ class BuildProducts(APIView):
 
 
 class EditBuildProduct(APIView):
+    # to get product using uuid
     def get(self, request, pid):
         try:
             r = b.get_build(pid)
@@ -23,6 +24,7 @@ class EditBuildProduct(APIView):
             return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
         return Response(data=r, status=status.HTTP_200_OK)
 
+    # to build to product
     def post(self, request, pid):
         bs = BuildProductSerializer(data=request.data)
         if bs.is_valid():
@@ -31,7 +33,8 @@ class EditBuildProduct(APIView):
         else:
             return Response(data=bs.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, pid):
+    # to discard product
+    def delete(self, request, pid):
         ds = DiscardProductSerializer(data=request.data)
         if ds.is_valid():
             try:
@@ -45,13 +48,14 @@ class EditBuildProduct(APIView):
         else:
             return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pid):
-        try:
-            a = b.delete_build(pid)
-            if a:
-                return Response(data={}, status=201)
-        except NotFound:
-            return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    # to delete product build
+    # def delete(self, request, pid):
+    #     try:
+    #         a = b.delete_build(pid)
+    #         if a:
+    #             return Response(data={}, status=status.HTTP_202_ACCEPTED)
+    #     except NotFound:
+    #         return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class BuildProduct(APIView):
