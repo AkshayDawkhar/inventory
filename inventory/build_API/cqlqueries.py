@@ -52,6 +52,8 @@ class BuildCQL:
     get_stock_query = session.prepare("SELECT instock FROM product_builds WHERE pid = ? LIMIT 1;")
     update_build_query = session.prepare("UPDATE product_builds SET building = ?  WHERE pid = ? IF EXISTS ;")
     update_stock_query = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? IF EXISTS ;")
+    restore_build_query = session.prepare("SELECT * FROM product_builds_trash WHERE pid = ? LIMIT 1;")
+    delete_build_trash_query = session.prepare("DELETE from product_builds_trash WHERE pid = ? IF EXISTS ;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
         self.session.execute(self.create_build_query, (pid, building, instock, needed, recommended))
@@ -191,6 +193,12 @@ class BuildCQL:
         else:
             return building - numbers
 
+    def restore_build_trash(self, pid):
+        trash = self.session.execute(self.restore_build_query, (pid,)).one()
+        self.session.execute(self.delete_build_trash_query, (pid,))
+        self.create_build(**trash)
+        print(trash)
+
 
 # for testing the query's
 if __name__ == '__main__':
@@ -214,5 +222,6 @@ if __name__ == '__main__':
     # print(b.get_build(uuid.UUID('5081a726-9ed2-11ed-8b52-f889d2e645af')))
     # print(b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af')))
     # maxbuilds = b.get_max_builds(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'))
-    b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
+    # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
     # b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
+    b.restore_build_trash(uuid.UUID('1e0f9f3b-14bb-4bf2-afa2-79feaa0c71e6'))
