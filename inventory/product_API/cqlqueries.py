@@ -147,6 +147,7 @@ class ProductCQL:
                 self.session.execute(self.delete_Trash_query, (pid,))
                 b.delete_required_trash(pid=pid)
                 b.create_required_items_by_data(data=ra)
+                b.restore_build_trash(pid=pid)
                 self.create_product(**a)
         else:
             raise DatabaseError
