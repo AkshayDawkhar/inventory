@@ -102,6 +102,9 @@ class BuildCQL:
         else:
             raise InvalidNumber
 
+    def edit_stock(self, pid, numbers):
+        self.session.execute(self.update_stock_query, (numbers, pid))
+
     def add_stock(self, pid, numbers):
         a = self.get_stock(pid)
         numbers = a + numbers

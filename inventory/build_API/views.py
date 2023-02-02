@@ -4,7 +4,7 @@ import uuid
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .cqlqueries import BuildCQL, NotFound, InvalidNumber
-from .serializer import RequiredItemSerializer, BuildProductSerializer, DiscardProductSerializer, StockProductSerialzer
+from .serializer import RequiredItemSerializer, BuildProductSerializer, DiscardProductSerializer, StockProductSerializer
 from rest_framework import status
 
 b = BuildCQL()
@@ -116,9 +116,21 @@ class RequiredFor(APIView):
         return Response(data=a, status=status.HTTP_200_OK)
 
 
+class EditStock(APIView):
+    def put(self, request, pid):
+        serializer = StockProductSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                b.edit_stock(pid, serializer.data.get('stock_no'))
+                build = b.get_build(pid=pid)
+                return Response(data=build,status=status.HTTP_200_OK)
+            except NotFound:
+                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+
 class Stock(APIView):
     def post(self, request, pid):
-        ss = StockProductSerialzer(data=request.data)
+        ss = StockProductSerializer(data=request.data)
         if ss.is_valid():
             try:
                 b.add_stock(pid=pid, numbers=ss.data.get('stock_no'))
@@ -133,7 +145,7 @@ class Stock(APIView):
             return Response(data=ss.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pid):
-        ss = StockProductSerialzer(data=request.data)
+        ss = StockProductSerializer(data=request.data)
         if ss.is_valid():
             try:
                 b.discard_stock(pid=pid, numbers=ss.data.get('stock_no'))
