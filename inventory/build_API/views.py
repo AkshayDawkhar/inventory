@@ -48,7 +48,17 @@ class EditBuildProduct(APIView):
         else:
             return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # to delete product build
+    def put(self, request, pid):
+        serializer = BuildProductSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                b.edit_building(pid,serializer.data.get('build_no'))
+                build = b.get_build(pid)
+                return Response(data=build,status=status.HTTP_200_OK)
+            except NotFound:
+                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # to delete product build
     # def delete(self, request, pid):
     #     try:
     #         a = b.delete_build(pid)
@@ -123,7 +133,7 @@ class EditStock(APIView):
             try:
                 b.edit_stock(pid, serializer.data.get('stock_no'))
                 build = b.get_build(pid=pid)
-                return Response(data=build,status=status.HTTP_200_OK)
+                return Response(data=build, status=status.HTTP_200_OK)
             except NotFound:
                 return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 

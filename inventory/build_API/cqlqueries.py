@@ -90,6 +90,9 @@ class BuildCQL:
         a = self.session.execute(self.delete_build_query, (pid,)).one()['[applied]']
         return a
 
+    def edit_building(self, pid, numbers):
+        self.session.execute(self.update_build_query, (numbers, pid))
+
     def build_product(self, pid, numbers=1):
         a = self.get_building(pid)
         numbers = a + numbers
