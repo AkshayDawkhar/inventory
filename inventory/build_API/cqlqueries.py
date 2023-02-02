@@ -54,7 +54,7 @@ class BuildCQL:
     update_stock_query = session.prepare("UPDATE product_builds SET instock = ?  WHERE pid = ? IF EXISTS ;")
     restore_build_query = session.prepare("SELECT * FROM product_builds_trash WHERE pid = ? LIMIT 1;")
     delete_build_trash_query = session.prepare("DELETE from product_builds_trash WHERE pid = ? IF EXISTS ;")
-    update_needed_query = session.prepare("UPDATE product_builds SET needed = ? WHERE pid = ? ;")
+    update_needed_query = session.prepare("UPDATE product_builds SET needed = ? WHERE pid = ?  IF EXISTS ;")
     get_needed_query = session.prepare("SELECT needed FROM product_builds WHERE pid = ? LIMIT 1;")
 
     def create_build(self, pid, building=0, instock=0, needed=0, recommended=0):
@@ -209,6 +209,14 @@ class BuildCQL:
         self.create_build(**trash)
         print(trash)
 
+    def generate_needed(self, rid):
+        req = self.get_req_items_by_rid(rid)
+        needed = 0
+        for i in req:
+            building = self.get_building(pid=i['pid'])
+            needed = needed + building * i['numbers']
+        return needed
+
     def update_needed(self, rid):
         needed = 1
         self.session.execute(self.update_needed_query, (needed, rid))
@@ -245,5 +253,6 @@ if __name__ == '__main__':
     # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
     # b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
     # b.restore_build_trash(uuid.UUID('1e0f9f3b-14bb-4bf2-afa2-79feaa0c71e6'))
-    b.update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af'))
-    print(b.get_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
+    # b.update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af'))
+    # print(b.get_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
+    print(b.generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
