@@ -97,7 +97,6 @@ class BuildCQL:
         a = self.get_building(pid)
         numbers = a + numbers
         self.session.execute(self.update_build_query, (numbers, pid))
-        # self.create_build(pid=pid, building=a['building'] + 1, instock=a['instock'], needed=a['needed'], recommended=0)
 
     def discard_product(self, pid, numbers=1):
         a = self.get_build(pid)

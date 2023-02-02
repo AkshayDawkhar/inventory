@@ -24,48 +24,15 @@ class EditBuildProduct(APIView):
             return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
         return Response(data=r, status=status.HTTP_200_OK)
 
-    # to build to product
-    def post(self, request, pid):
-        bs = BuildProductSerializer(data=request.data)
-        if bs.is_valid():
-            b.build_product(pid, numbers=bs.data.get('build_no'))
-            return self.get(request, pid)
-        else:
-            return Response(data=bs.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # to discard product
-    def delete(self, request, pid):
-        ds = DiscardProductSerializer(data=request.data)
-        if ds.is_valid():
-            try:
-                b.discard_product(pid, numbers=ds.data.get('discard_no'))
-                return self.get(request, pid)
-            except InvalidNumber:
-                return Response(data={'discard_no': ["Ensure this value is less than or equal to level ."]},
-                                status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-            except NotFound:
-                return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response(data=ds.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def put(self, request, pid):
         serializer = BuildProductSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                b.edit_building(pid,serializer.data.get('build_no'))
+                b.edit_building(pid, serializer.data.get('build_no'))
                 build = b.get_build(pid)
-                return Response(data=build,status=status.HTTP_200_OK)
+                return Response(data=build, status=status.HTTP_200_OK)
             except NotFound:
                 return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
-
-        # to delete product build
-    # def delete(self, request, pid):
-    #     try:
-    #         a = b.delete_build(pid)
-    #         if a:
-    #             return Response(data={}, status=status.HTTP_202_ACCEPTED)
-    #     except NotFound:
-    #         return Response(data={'error': 'product Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class BuildProduct(APIView):
