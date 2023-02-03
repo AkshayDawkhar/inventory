@@ -142,3 +142,9 @@ class GetMax(APIView):
     def get(self, request, pid):
         a = b.get_max_builds(pid)
         return Response(a, status=status.HTTP_200_OK)
+
+
+class GetNeeded(APIView):
+    def get(self, request, pid):
+        needed = b.generate_needed(pid)
+        return Response(data=needed,status=status.HTTP_200_OK)

@@ -10,5 +10,6 @@ urlpatterns = [
     path('needed/<uuid:rid>', views.RequiredFor.as_view(), name='get_row_needed'),
     path('edit/stock/<uuid:pid>', views.EditStock.as_view(), name='edit_stock'),
     path('stock/<uuid:pid>', views.Stock.as_view(), name='stock'),
-    path('maxbuild/<uuid:pid>', views.GetMax.as_view(), name='get_max')
+    path('maxbuild/<uuid:pid>', views.GetMax.as_view(), name='get_max'),
+    path('needs/<uuid:pid>', views.GetNeeded.as_view(), name='get_needed'),
 ]

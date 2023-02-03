@@ -217,6 +217,7 @@ class BuildCQL:
         for i in req:
             building = self.get_building(pid=i['pid'])
             needed = needed + building * i['numbers']
+        self.session.execute(self.update_needed_query, (needed, rid))
         return needed
 
     def update_needed(self, rid):
