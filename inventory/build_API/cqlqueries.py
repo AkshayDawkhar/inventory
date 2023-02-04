@@ -184,6 +184,12 @@ class BuildCQL:
 
     def safe_build(self, pid, numbers):
         builds = self.get_max_builds(pid)
+
+        if builds is None:
+            builds = self.get_build(pid)['building']
+            self.build_product(pid, numbers)
+            return numbers
+            # print(a)
         if builds is not None and builds >= numbers:
             items = self.get_required_items(pid)
             for i in items:
