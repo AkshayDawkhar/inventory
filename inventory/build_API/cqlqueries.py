@@ -220,8 +220,19 @@ class BuildCQL:
         self.session.execute(self.update_needed_query, (needed, rid))
         return needed
 
-    def update_needed(self, rid):
-        needed = 1
+    def add_needed(self, pid, numbers):
+        needed = self.get_needed(pid)
+        needed = needed + numbers
+        self.update_needed(pid, needed)
+        print(self.get_needed(pid))
+
+    def remove_needed(self, pid, numbers):
+        needed = self.get_needed(pid)
+        needed = needed - numbers
+        self.update_needed(pid, needed)
+        print(self.get_needed(pid))
+
+    def update_needed(self, rid, needed=0):
         self.session.execute(self.update_needed_query, (needed, rid))
 
     def get_needed(self, rid):
@@ -258,4 +269,5 @@ if __name__ == '__main__':
     # b.restore_build_trash(uuid.UUID('1e0f9f3b-14bb-4bf2-afa2-79feaa0c71e6'))
     # b.update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af'))
     # print(b.get_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
-    print(b.generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
+    # print(b.generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
+    b.add_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af'), numbers=12)
