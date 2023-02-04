@@ -183,22 +183,26 @@ class BuildCQL:
         return a
 
     def safe_build(self, pid, numbers):
-        max = self.get_max_builds(pid)
-        if max is not None and max >= numbers:
+        builds = self.get_max_builds(pid)
+        if builds is not None and builds >= numbers:
             items = self.get_required_items(pid)
             for i in items:
-                self.discard_stock(pid=i['rid'], numbers=i['numbers'] * numbers)
+                total = i['numbers'] * numbers
+                self.discard_stock(pid=i['rid'], numbers=total)
+                self.add_needed(pid=i['rid'], numbers=total)
             self.build_product(pid, numbers)
             return numbers
-        elif max <= numbers:
-            return max - numbers
+        elif builds <= numbers:
+            return builds - numbers
 
     def safe_discard(self, pid, numbers):
         building = self.get_building(pid)
         if numbers <= building:
             items = self.get_required_items(pid)
             for i in items:
-                self.add_stock(pid=i['rid'], numbers=i['numbers'] * numbers)
+                total = i['numbers'] * numbers
+                self.add_stock(pid=i['rid'], numbers=total)
+                self.remove_needed(pid=i['rid'], numbers=total)
             self.discard_product(pid, numbers)
             # print('valid to discard')
             return numbers
@@ -228,9 +232,10 @@ class BuildCQL:
 
     def remove_needed(self, pid, numbers):
         needed = self.get_needed(pid)
-        needed = needed - numbers
-        self.update_needed(pid, needed)
-        print(self.get_needed(pid))
+        if needed >= numbers:
+            needed = needed - numbers
+            self.update_needed(pid, needed)
+            print(self.get_needed(pid))
 
     def update_needed(self, rid, needed=0):
         self.session.execute(self.update_needed_query, (needed, rid))
@@ -270,4 +275,4 @@ if __name__ == '__main__':
     # b.update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af'))
     # print(b.get_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
     # print(b.generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
-    b.add_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af'), numbers=12)
+    b.remove_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af'), numbers=12)
