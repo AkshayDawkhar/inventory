@@ -12,10 +12,14 @@ class Orders(APIView):
     def get(self, request):
         orders = order_cql.get_orders()
         return Response(data=orders, status=status.HTTP_200_OK)
+
+
 class Order(APIView):
-    def post(self, request,pid):
+    def post(self, request, pid):
         serializers = EditOrderSerializers(data=request.data)
         if serializers.is_valid():
-            return Response(data=serializers.data, status=status.HTTP_200_OK)
+            order_cql.edit_orders(pid=pid, ts=serializers.data.get('timestamp'),
+                                  numbers=serializers.data.get('numbers'))
+            return Response(data={}, status=status.HTTP_200_OK)
         else:
             return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
