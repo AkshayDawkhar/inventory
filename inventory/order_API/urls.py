@@ -3,5 +3,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.Orders.as_view())
+    path('', views.Orders.as_view()),
+    path('<uuid:pid>', views.Order.as_view()),
 ]
