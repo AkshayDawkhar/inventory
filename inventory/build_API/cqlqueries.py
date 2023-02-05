@@ -116,8 +116,8 @@ class BuildCQL:
             stock = stock + numbers
             self.session.execute(self.update_stock_query, (stock, pid))
             self.discard_product(pid, numbers)
-            self.generate_needed(pid)
-            # self.remove_needed(pid)
+            # self.generate_needed(pid)
+            self.remove_needed_by_pid(pid, numbers)
         else:
             raise InvalidNumber
 
@@ -236,7 +236,7 @@ class BuildCQL:
         items = self.get_required_items(pid)
         for i in items:
             # print(i)
-            self.remove_needed(i['rid'], i['numbers']*numbers)
+            self.remove_needed(i['rid'], i['numbers'] * numbers)
 
     def add_needed(self, rid, numbers):
         needed = self.get_needed(rid)
