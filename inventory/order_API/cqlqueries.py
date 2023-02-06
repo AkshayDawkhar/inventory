@@ -27,12 +27,19 @@ def get_order_number(date, pid):
         return None
 
 
+def add_order(pid, date, numbers):
+    order_numbers = get_order_number(date=date, pid=pid)
+    if order_numbers is not None:
+        order_numbers = order_numbers + numbers
+        edit_orders(pid=pid, ts=date, numbers=order_numbers)
+
+
 def edit_orders(pid, ts, numbers=1):
     dt = datetime.fromtimestamp(ts)
     session.execute(insert_into_orders_query, (dt, pid, dt, numbers))
 
 
 if __name__ == '__main__':
-    # a = edit_orders(uuid.UUID('db111c18-222b-4914-a108-b3e759239c5e'), 1675595420, 1)
+    a = add_order(date=1675595420, pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e'), numbers=1)
     a = get_order_number(date=1675595420, pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e'))
     print(a)
