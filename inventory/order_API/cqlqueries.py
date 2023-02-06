@@ -12,6 +12,7 @@ insert_into_orders_query = session.prepare(
     "INSERT INTO orders (date , pid , timestamp , numbers ) VALUES ( ? , ?,?, ? ) ;")
 get_order_number_query = session.prepare("SELECT numbers FROM orders WHERE date= ? AND  pid = ? ")
 get_order_query = session.prepare("SELECT pid , numbers, timestamp  FROM orders WHERE date = ? AND pid = ? ;")
+edit_order_query = session.prepare("UPDATE orders SET numbers = ? WHERE date = ? AND pid = ? IF EXISTS;")
 
 
 def get_orders():
@@ -46,7 +47,7 @@ def add_order(pid, date, numbers):
 
 def edit_orders(pid, ts, numbers=1):
     dt = datetime.fromtimestamp(ts)
-    session.execute(insert_into_orders_query, (dt, pid, dt, numbers))
+    session.execute(edit_order_query, (numbers, dt, pid))
 
 
 if __name__ == '__main__':

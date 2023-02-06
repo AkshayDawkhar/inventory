@@ -41,6 +41,8 @@ class Order(APIView):
         if serializers.is_valid():
             order_cql.edit_orders(pid=pid, ts=serializers.data.get('timestamp'),
                                   numbers=serializers.data.get('numbers'))
-            return Response(data={}, status=status.HTTP_200_OK)
-        else:
-            return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+            order = order_cql.get_order(serializers.data.get('timestamp'), pid)
+            if order is None:
+                return Response(data={}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
