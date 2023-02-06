@@ -11,11 +11,21 @@ get_orders_query = session.prepare("SELECT pid,numbers,timestamp FROM orders ;")
 insert_into_orders_query = session.prepare(
     "INSERT INTO orders (date , pid , timestamp , numbers ) VALUES ( ? , ?,?, ? ) ;")
 get_order_number_query = session.prepare("SELECT numbers FROM orders WHERE date= ? AND  pid = ? ")
+get_order_query = session.prepare("SELECT pid , numbers, timestamp  FROM orders WHERE date = ? AND pid = ? ;")
 
 
 def get_orders():
     orders = session.execute(get_orders_query).all()
     return orders
+
+
+def get_order(date, pid):
+    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+    order = session.execute(get_order_query, (date, pid)).one()
+    if order is not None:
+        return order
+    else:
+        return None
 
 
 def get_order_number(date, pid):
