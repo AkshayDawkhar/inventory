@@ -36,6 +36,18 @@ class Order(APIView):
         else:
             return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pid):
+        serializers = EditOrderSerializers(data=request.data)
+        if serializers.is_valid():
+            order_cql.remove_order(pid=pid, date=serializers.data.get('timestamp'),
+                                numbers=serializers.data.get('numbers'))
+            order = order_cql.get_order(serializers.data.get('timestamp'), pid)
+            if order is None:
+                return Response(data={}, status=status.HTTP_404_NOT_FOUND)
+            return Response(data=order, status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request, pid):
         serializers = EditOrderSerializers(data=request.data)
         if serializers.is_valid():
@@ -44,5 +56,6 @@ class Order(APIView):
             order = order_cql.get_order(serializers.data.get('timestamp'), pid)
             if order is None:
                 return Response(data={}, status=status.HTTP_404_NOT_FOUND)
-            else:
-                return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(order, status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -45,6 +45,13 @@ def add_order(pid, date, numbers):
         edit_orders(pid=pid, ts=date, numbers=order_numbers)
 
 
+def remove_order(pid, date, numbers):
+    order_numbers = get_order_number(date=date, pid=pid)
+    if order_numbers is not None and order_numbers >= numbers:
+        order_numbers = order_numbers - numbers
+        edit_orders(pid=pid, ts=date, numbers=order_numbers)
+
+
 def edit_orders(pid, ts, numbers=1):
     dt = datetime.fromtimestamp(ts)
     session.execute(edit_order_query, (numbers, dt, pid))
