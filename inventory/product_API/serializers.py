@@ -1,8 +1,8 @@
 from rest_framework import serializers
 # from rest_framework.fields import UUIDField
 import re
-from .cqlqueries import ProductCQL, DatabaseError
-
+from .cqlqueries import  DatabaseError
+from . import cqlqueries as product_cql
 
 class Already_Exist(Exception):
     pass
@@ -12,7 +12,7 @@ class InvalidDname(Exception):
     pass
 
 
-p = ProductCQL()
+# product_cql = ProductCQL()
 
 
 class low(serializers.CharField):
@@ -69,10 +69,10 @@ class CreateProductSerializer(serializers.Serializer):
         if not attrs['pname']:
             raise InvalidDname
         try:
-            pid = p.get_pid(pname=attrs['pname'], color=attrs['color'], required_items=attrs['required_items'])
+            pid = product_cql.get_pid(pname=attrs['pname'], color=attrs['color'], required_items=attrs['required_items'])
             raise serializers.ValidationError({'error': 'Already Exist'})
         except DatabaseError:
-            p.create_product(pname=attrs['pname'], required_items=attrs['required_items'],
+            product_cql.create_product(pname=attrs['pname'], required_items=attrs['required_items'],
                              color=attrs['color'], category=attrs['category'], dname=attrs['dname'], required_items_no=attrs['required_items_no'])
             # raise serializers.ValidationError(self.error_massages, code='valid')
         return attrs
