@@ -65,8 +65,10 @@ class Order(APIView):
     def post(self, request, pid):
         serializers = EditOrderSerializers(data=request.data)
         if serializers.is_valid():
-            order_cql.complete_order(pid=pid, date=serializers.data.get('timestamp'),
-                                     numbers=serializers.data.get('numbers'))
+            complete_order = order_cql.complete_order(pid=pid, date=serializers.data.get('timestamp'),
+                                                      numbers=serializers.data.get('numbers'))
+            if complete_order is not None:
+                return Response(data={'error': ['out of stock need %d' % (-complete_order)]})
             order = order_cql.get_order(serializers.data.get('timestamp'), pid)
             if order is None:
                 return Response(data={}, status=status.HTTP_404_NOT_FOUND)
