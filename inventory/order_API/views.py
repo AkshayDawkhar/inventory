@@ -14,7 +14,7 @@ class Orders(APIView):
         return Response(data=orders, status=status.HTTP_200_OK)
 
 
-class Order(APIView):
+class EditOrder(APIView):
 
     def get(self, request, pid):
         serializers = GetOrderSerializers(data=request.data)
