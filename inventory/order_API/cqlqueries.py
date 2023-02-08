@@ -12,9 +12,10 @@ get_orders_query = session.prepare("SELECT pid,numbers,timestamp FROM orders ;")
 insert_into_orders_query = session.prepare(
     "INSERT INTO orders (date , pid , timestamp , numbers ) VALUES ( ? , ?,?, ? ) ;")
 get_order_number_query = session.prepare("SELECT numbers FROM orders WHERE date= ? AND  pid = ? ")
-get_order_query = session.prepare("SELECT pid , numbers, timestamp  FROM orders WHERE date = ? AND pid = ? ;")
+get_order_query = session.prepare("SELECT pid , numbers, timestamp  FROM orders WHERE date = ? AND pid = ? LIMIT 1 ;")
 edit_order_query = session.prepare("UPDATE orders SET numbers = ? WHERE date = ? AND pid = ? IF EXISTS;")
 get_orders_by_pid_query = session.prepare("SELECT pid , numbers, timestamp FROM orders_by_pid WHERE pid = ? ;")
+get_orders_by_date_query = session.prepare("SELECT * FROM orders WHERE date = ? ;")
 
 
 def get_orders():
@@ -22,13 +23,24 @@ def get_orders():
     return orders
 
 
-def get_order(date, pid):
-    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
-    order = session.execute(get_order_query, (date, pid)).one()
-    if order is not None:
-        return order
+def get_order(date=None, pid=None):
+    if date is not None and pid is not None:
+        date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+        order = session.execute(get_order_query, (date, pid)).one()
+        if order is not None:
+            return order
+        else:
+            return None
+    elif date is not None and pid is None:
+        date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+        orders = session.execute(get_orders_by_date_query, (date,)).all()
+        return orders
+    elif pid is not None and date is None:
+        orders = session.execute(get_orders_by_pid_query, (pid,)).all()
+        return orders
     else:
-        return None
+        orders = session.execute(get_orders_query).all()
+        return orders
 
 
 def get_order_number(date, pid):
@@ -83,4 +95,6 @@ if __name__ == '__main__':
     # a = get_order_number(date=1675595420, pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e'))
     # print(a)
     # complete_order(pid=uuid.UUID('6a9dbb20-a4b5-11ed-97fb-f889d2e645af'), date=1675595420, numbers=12)
-    print(get_orders_by_pid(pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e')))
+    # print(get_orders_by_pid(pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e')))
+    print(get_order(pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e')))
+    print(get_order(date=1675569998))
