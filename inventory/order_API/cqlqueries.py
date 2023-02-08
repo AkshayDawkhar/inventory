@@ -15,7 +15,7 @@ get_order_number_query = session.prepare("SELECT numbers FROM orders WHERE date=
 get_order_query = session.prepare("SELECT pid , numbers, timestamp  FROM orders WHERE date = ? AND pid = ? LIMIT 1 ;")
 edit_order_query = session.prepare("UPDATE orders SET numbers = ? WHERE date = ? AND pid = ? IF EXISTS;")
 get_orders_by_pid_query = session.prepare("SELECT pid , numbers, timestamp FROM orders_by_pid WHERE pid = ? ;")
-get_orders_by_date_query = session.prepare("SELECT * FROM orders WHERE date = ? ;")
+get_orders_by_date_query = session.prepare("SELECT pid , numbers, timestamp FROM orders WHERE date = ? ;")
 
 
 def get_orders():
