@@ -14,6 +14,7 @@ insert_into_orders_query = session.prepare(
 get_order_number_query = session.prepare("SELECT numbers FROM orders WHERE date= ? AND  pid = ? ")
 get_order_query = session.prepare("SELECT pid , numbers, timestamp  FROM orders WHERE date = ? AND pid = ? ;")
 edit_order_query = session.prepare("UPDATE orders SET numbers = ? WHERE date = ? AND pid = ? IF EXISTS;")
+get_orders_by_pid_query = session.prepare("SELECT pid , numbers, timestamp FROM orders_by_pid WHERE pid = ? ;")
 
 
 def get_orders():
@@ -72,8 +73,14 @@ def complete_order(pid, date, numbers):
         # edit_orders(pid=pid, ts=date, numbers=order_numbers)
 
 
+def get_orders_by_pid(pid):
+    orders = session.execute(get_orders_by_pid_query, (pid,)).all()
+    return orders
+
+
 if __name__ == '__main__':
     # a = add_order(date=1675595420, pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e'), numbers=1)
     # a = get_order_number(date=1675595420, pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e'))
     # print(a)
-    complete_order(pid=uuid.UUID('6a9dbb20-a4b5-11ed-97fb-f889d2e645af'), date=1675595420, numbers=12)
+    # complete_order(pid=uuid.UUID('6a9dbb20-a4b5-11ed-97fb-f889d2e645af'), date=1675595420, numbers=12)
+    print(get_orders_by_pid(pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e')))
