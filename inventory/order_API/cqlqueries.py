@@ -21,6 +21,7 @@ get_order_number_by_pid_query = session.prepare("SELECT numbers FROM orders_by_p
 
 
 def create_order(pid, date, numbers=0):
+    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
     session.execute(create_order_query, (date, pid, numbers))
 
 
@@ -64,6 +65,9 @@ def add_order(pid, date, numbers):
         order_numbers = order_numbers + numbers
         build_cql.add_needed(pid, numbers)
         edit_orders(pid=pid, ts=date, numbers=order_numbers)
+    else:
+        build = build_cql.get_build(pid)
+        create_order(pid=pid, date=date, numbers=numbers)
 
 
 def remove_order(pid, date, numbers):
