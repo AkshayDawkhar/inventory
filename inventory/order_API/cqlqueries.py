@@ -8,6 +8,7 @@ cluster = Cluster(['127.0.0.1'])
 session = cluster.connect('model1')
 session.row_factory = dict_factory
 
+create_order_query = session.prepare("INSERT INTO orders (date , pid , numbers ) VALUES ( ?, ?, ? ) ;")
 get_orders_query = session.prepare("SELECT pid,numbers,timestamp FROM orders ;")
 insert_into_orders_query = session.prepare(
     "INSERT INTO orders (date , pid , timestamp , numbers ) VALUES ( ? , ?,?, ? ) ;")
@@ -17,6 +18,10 @@ edit_order_query = session.prepare("UPDATE orders SET numbers = ? WHERE date = ?
 get_orders_by_pid_query = session.prepare("SELECT pid , numbers, timestamp FROM orders_by_pid WHERE pid = ? ;")
 get_orders_by_date_query = session.prepare("SELECT pid , numbers, timestamp FROM orders WHERE date = ? ;")
 get_order_number_by_pid_query = session.prepare("SELECT numbers FROM orders_by_pid WHERE pid = ? ;")
+
+
+def create_order(pid, date, numbers=0):
+    session.execute(create_order_query, (date, pid, numbers))
 
 
 def get_orders():
@@ -66,6 +71,7 @@ def remove_order(pid, date, numbers):
     if order_numbers is not None and order_numbers >= numbers:
         order_numbers = order_numbers - numbers
         edit_orders(pid=pid, ts=date, numbers=order_numbers)
+        # add_need(pid)
 
 
 def edit_orders(pid, ts, numbers=1):
