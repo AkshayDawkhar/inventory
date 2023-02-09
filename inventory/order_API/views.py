@@ -30,8 +30,11 @@ class EditOrder(APIView):
     def post(self, request, pid):
         serializers = EditOrderSerializers(data=request.data)
         if serializers.is_valid():
-            order_cql.add_order(pid=pid, date=serializers.data.get('timestamp'),
-                                numbers=serializers.data.get('numbers'))
+            try:
+                order_cql.add_order(pid=pid, date=serializers.data.get('timestamp'),
+                                    numbers=serializers.data.get('numbers'))
+            except order_cql.build_cql.NotFound:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
             order = order_cql.get_order(serializers.data.get('timestamp'), pid)
             if order is None:
                 return Response(data={}, status=status.HTTP_404_NOT_FOUND)
