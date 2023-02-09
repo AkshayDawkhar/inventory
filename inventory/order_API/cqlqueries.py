@@ -93,7 +93,8 @@ def get_orders_by_pid(pid):
 
 def add_need(pid):
     numbers = session.execute(get_order_number_by_pid_query, (pid,)).all()
-    return sum([n['numbers'] for n in numbers])
+    number = sum([n['numbers'] for n in numbers])
+    build_cql.update_needed(rid=pid, needed=number)
 
 
 if __name__ == '__main__':
