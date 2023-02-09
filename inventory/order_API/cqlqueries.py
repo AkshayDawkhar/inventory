@@ -8,7 +8,7 @@ cluster = Cluster(['127.0.0.1'])
 session = cluster.connect('model1')
 session.row_factory = dict_factory
 
-create_order_query = session.prepare("INSERT INTO orders (date , pid , numbers ) VALUES ( ?, ?, ? ) ;")
+# create_order_query = session.prepare("INSERT INTO orders (date , pid , numbers ) VALUES ( ?, ?, ? ) ;")
 get_orders_query = session.prepare("SELECT pid,numbers,timestamp FROM orders ;")
 insert_into_orders_query = session.prepare(
     "INSERT INTO orders (date , pid , timestamp , numbers ) VALUES ( ? , ?,?, ? ) ;")
@@ -20,9 +20,10 @@ get_orders_by_date_query = session.prepare("SELECT pid , numbers, timestamp FROM
 get_order_number_by_pid_query = session.prepare("SELECT numbers FROM orders_by_pid WHERE pid = ? ;")
 
 
-def create_order(pid, date, numbers=0):
-    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
-    session.execute(create_order_query, (date, pid, numbers))
+def create_order(pid, date, numbers=1):
+    date_no = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+    date = datetime.fromtimestamp(date)
+    session.execute(insert_into_orders_query, (date_no, pid, date, numbers))
 
 
 def get_orders():
