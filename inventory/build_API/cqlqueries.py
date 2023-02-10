@@ -268,20 +268,19 @@ def remove_needed_by_pid(pid, numbers):
 def add_needed(rid, numbers):
     needed = get_needed(rid)
     needed = needed + numbers
-    update_needed(rid, needed)
-    print(get_needed(rid))
+    return update_needed(rid, needed)
 
 
 def remove_needed(rid, numbers):
     needed = get_needed(rid)
     if needed >= numbers:
         needed = needed - numbers
-        update_needed(rid, needed)
-        print(get_needed(rid))
-
+        return update_needed(rid, needed)
+    return False
 
 def update_needed(rid, needed=0):
-    session.execute(update_needed_query, (needed, rid))
+    a = session.execute(update_needed_query, (needed, rid)).one()
+    return a['[applied]']
 
 
 def get_needed(rid):
@@ -315,7 +314,7 @@ if __name__ == '__main__':
     # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
     # b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
     # b.restore_build_trash(uuid.UUID('1e0f9f3b-14bb-4bf2-afa2-79feaa0c71e6'))
-    # b.update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af'))
+    print(update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af')))
     # print(b.get_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
     # print(b.generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
     # b.remove_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af'), numbers=12)
