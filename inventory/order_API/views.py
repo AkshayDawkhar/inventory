@@ -33,7 +33,7 @@ class EditOrder(APIView):
             try:
                 order_cql.add_order(pid=pid, date=serializers.data.get('timestamp'),
                                     numbers=serializers.data.get('numbers'))
-            except order_cql.build_cql.NotFound:
+            except order_cql.NotFound:
                 return Response(data=None, status=status.HTTP_404_NOT_FOUND)
             order = order_cql.get_order(serializers.data.get('timestamp'), pid)
             if order is None:

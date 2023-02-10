@@ -22,6 +22,18 @@ update_compete_order_query = session.prepare(
     "UPDATE complete_order SET number = number + ? WHERE date = ? AND pid = ? ;")
 
 
+class DatabaseError(Exception):
+    """
+    The base error that functions in this module will raise when things go
+    wrong.
+    """
+    pass
+
+
+class NotFound(DatabaseError):
+    pass
+
+
 def create_order(pid, date, numbers=1):
     date_no = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
     date = datetime.fromtimestamp(date)
@@ -69,8 +81,10 @@ def add_order(pid, date, numbers):
         build_cql.add_needed(pid, numbers)
         edit_orders(pid=pid, ts=date, numbers=order_numbers)
     else:
-        build = build_cql.get_build(pid)
-        create_order(pid=pid, date=date, numbers=numbers)
+        if build_cql.add_needed(pid, numbers):
+            create_order(pid=pid, date=date, numbers=numbers)
+        else:
+            raise NotFound
 
 
 def remove_order(pid, date, numbers):
