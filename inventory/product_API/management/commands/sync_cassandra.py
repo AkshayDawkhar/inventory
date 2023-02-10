@@ -28,6 +28,7 @@ def test_cassandra():
     session.execute("CREATE TABLE model1.product_builds_trash (pid uuid PRIMARY KEY,building int,instock int,needed int,recommended int);")
     session.execute("CREATE TABLE orders ( pid uuid , date date , numbers int ,PRIMARY KEY (date,pid)) ;")
     session.prepare("CREATE MATERIALIZED VIEW orders_by_pid AS SELECT * FROM orders WHERE pid IS NOT NULL AND date IS NOT NULL  AND numbers IS NOT NULL and timestamp IS NOT NULL PRIMARY KEY ( pid ,date) ;")
+    session.execute("CREATE TABLE complete_order ( date date ,pid uuid , number counter,PRIMARY KEY (date , pid)) ;")
     print('done')
     # con = connection.register_connection('cluster', session=sec)
     # create_keyspace_simple('model1', 1, connections=['cluster'])
