@@ -18,7 +18,8 @@ edit_order_query = session.prepare("UPDATE orders SET numbers = ? WHERE date = ?
 get_orders_by_pid_query = session.prepare("SELECT pid , numbers, timestamp FROM orders_by_pid WHERE pid = ? ;")
 get_orders_by_date_query = session.prepare("SELECT pid , numbers, timestamp FROM orders WHERE date = ? ;")
 get_order_number_by_pid_query = session.prepare("SELECT numbers FROM orders_by_pid WHERE pid = ? ;")
-update_compete_order_query = session.prepare("UPDATE complete_order SET number = number + ? WHERE date = ? AND pid = ? ;")
+update_compete_order_query = session.prepare(
+    "UPDATE complete_order SET number = number + ? WHERE date = ? AND pid = ? ;")
 
 
 def create_order(pid, date, numbers=1):
@@ -92,6 +93,7 @@ def complete_order(pid, date, numbers):
             build_cql.discard_stock(pid, numbers)
             build_cql.remove_needed(pid, numbers)
             remove_order(pid=pid, date=date, numbers=numbers)
+            update_complete_order(pid=pid, date=date, numbers=numbers)
         except build_cql.InvalidNumber:
             return build_cql.get_stock(pid) - numbers
 
@@ -110,6 +112,7 @@ def add_need(pid):
 
 
 def update_complete_order(pid, date, numbers):
+    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
     session.execute(update_compete_order_query, (numbers, date, pid))
 
 
@@ -122,4 +125,4 @@ if __name__ == '__main__':
     # print(get_order(pid=uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e')))
     # print(get_order(date=1675569998))
     # print(add_need(uuid.UUID('db656c18-222b-4914-a108-b3e759239c5e')))
-    print(update_complete_order(pid=uuid.UUID('36bc2d5a-a4b5-11ed-93a4-f889d2e645af'), date='2023-02-05', numbers=-13))
+    print(update_complete_order(pid=uuid.UUID('36bc2d5a-a4b5-11ed-93a4-f889d2e645af'), date=1675584451, numbers=-13))
