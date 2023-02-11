@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date as dates
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 from build_API import cqlqueries as build_cql
@@ -35,9 +35,8 @@ class NotFound(DatabaseError):
 
 
 def create_order(pid, date, numbers=1):
-    date_no = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
     date = datetime.fromtimestamp(date)
-    session.execute(insert_into_orders_query, (date_no, pid, date, numbers))
+    session.execute(insert_into_orders_query, (date, pid, date, numbers))
 
 
 def get_orders():
@@ -47,14 +46,14 @@ def get_orders():
 
 def get_order(date=None, pid=None):
     if date is not None and pid is not None:
-        date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+        date = dates.fromtimestamp(date)
         order = session.execute(get_order_query, (date, pid)).one()
         if order is not None:
             return order
         else:
             return None
     elif date is not None and pid is None:
-        date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+        date = dates.fromtimestamp(date)
         orders = session.execute(get_orders_by_date_query, (date,)).all()
         return orders
     elif pid is not None and date is None:
@@ -66,7 +65,7 @@ def get_order(date=None, pid=None):
 
 
 def get_order_number(date, pid):
-    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+    date = dates.fromtimestamp(date)
     numbers = session.execute(get_order_number_query, (date, pid)).one()
     if numbers is not None:
         return numbers['numbers']
@@ -127,7 +126,7 @@ def add_need(pid):
 
 
 def update_complete_order(pid, date, numbers):
-    date = datetime.fromtimestamp(date).strftime('%Y-%m-%d')
+    date = dates.fromtimestamp(date)
     session.execute(update_compete_order_query, (numbers, date, pid))
 
 
