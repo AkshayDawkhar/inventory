@@ -130,6 +130,7 @@ def add_stock(pid, numbers):
         stock = stock + numbers
         session.execute(update_stock_query, (stock, pid))
         discard_product(pid, numbers)
+        update_complete_build(pid, numbers)
         # generate_needed(pid)
         remove_needed_by_pid(pid, numbers)
     else:
@@ -295,7 +296,7 @@ def get_needed(rid):
     return 0
 
 
-def update_complete_build(pid, date=None, numbers=12):
+def update_complete_build(pid, numbers, date=None, ):
     if date is None:
         date = dates.today()
     else:
