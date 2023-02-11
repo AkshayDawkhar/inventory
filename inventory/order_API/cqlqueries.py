@@ -92,6 +92,7 @@ def remove_order(pid, date, numbers):
     if order_numbers is not None and order_numbers >= numbers:
         order_numbers = order_numbers - numbers
         edit_orders(pid=pid, ts=date, numbers=order_numbers)
+        build_cql.remove_needed(rid=pid, numbers=numbers)
         # add_need(pid)
 
 
@@ -105,7 +106,7 @@ def complete_order(pid, date, numbers):
     if order_numbers is not None and order_numbers >= numbers:
         try:
             build_cql.discard_stock(pid, numbers)
-            build_cql.remove_needed(pid, numbers)
+            # build_cql.remove_needed(pid, numbers)
             remove_order(pid=pid, date=date, numbers=numbers)
             update_complete_order(pid=pid, date=date, numbers=numbers)
         except build_cql.InvalidNumber:

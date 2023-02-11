@@ -278,6 +278,7 @@ def remove_needed(rid, numbers):
         return update_needed(rid, needed)
     return False
 
+
 def update_needed(rid, needed=0):
     a = session.execute(update_needed_query, (needed, rid)).one()
     return a['[applied]']
