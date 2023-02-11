@@ -1,3 +1,5 @@
+from datetime import date as dates
+from datetime import datetime
 import uuid
 
 from cassandra.cluster import Cluster
@@ -55,6 +57,8 @@ restore_build_query = session.prepare("SELECT * FROM product_builds_trash WHERE 
 delete_build_trash_query = session.prepare("DELETE from product_builds_trash WHERE pid = ? IF EXISTS ;")
 update_needed_query = session.prepare("UPDATE product_builds SET needed = ? WHERE pid = ?  IF EXISTS ;")
 get_needed_query = session.prepare("SELECT needed FROM product_builds WHERE pid = ? LIMIT 1;")
+update_complete_build_query = session.prepare(
+    "UPDATE complete_build SET numbers = numbers + ?  WHERE date = ? AND pid = ? ;")
 
 
 def create_build(pid, building=0, instock=0, needed=0, recommended=0):
@@ -291,6 +295,14 @@ def get_needed(rid):
     return 0
 
 
+def update_complete_build(pid, date=None, numbers=12):
+    if date is None:
+        date = dates.today()
+    else:
+        date = dates.fromtimestamp(date)
+    session.execute(update_complete_build_query, (numbers, date, pid))
+
+
 # for testing the query's
 if __name__ == '__main__':
     # print(b.get_build(uuid.UUID('b11c39cf-0ced-45ed-88d4-015b9a3d4cfe')))
@@ -315,8 +327,9 @@ if __name__ == '__main__':
     # b.safe_build(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=4)
     # b.safe_discard(uuid.UUID('cb27fb90-9f1a-11ed-801a-f889d2e645af'), numbers=1)
     # b.restore_build_trash(uuid.UUID('1e0f9f3b-14bb-4bf2-afa2-79feaa0c71e6'))
-    print(update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af')))
+    # print(update_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e641af')))
     # print(b.get_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
     # print(b.generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
     # b.remove_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af'), numbers=12)
-    remove_needed_by_pid(uuid.UUID('dca8a65a-a490-11ed-9017-f889d2e645af'), 12)
+    # remove_needed_by_pid(uuid.UUID('dca8a65a-a490-11ed-9017-f889d2e645af'), 12)
+    update_complete_build(pid=uuid.UUID('154f1934-a4b5-11ed-ad91-f889d2e645af'), date=167558445)
