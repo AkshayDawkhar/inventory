@@ -18,3 +18,10 @@ class accounts(APIView):
             if worker:
                 return Response(data='error':['user Already Exists'],status=status.HTTP_208_ALREADY_REPORTED)
         return Response(data=accoutCQL.get_workers(), status=status.HTTP_200_OK)
+
+class account(APIView):
+    def get(self, request,username):
+        worker = accoutCQL.get_workers(username=username)
+        if worker is None:
+            return Response(data=None,status=status.HTTP_404_NOT_FOUND)
+        return Response(data=worker,status=status.HTTP_200_OK)

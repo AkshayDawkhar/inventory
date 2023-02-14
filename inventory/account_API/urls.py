@@ -4,4 +4,5 @@ from . import views
 
 urlpatterns = [
     path('', views.accounts.as_view()),
+    path('/<String:username>')
     ]
