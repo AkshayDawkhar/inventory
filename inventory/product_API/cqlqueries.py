@@ -174,7 +174,7 @@ def get_trash(pid):
 
 
 if __name__ == "__main__":
-    p = ProductCQL()
+    # p = ProductCQL()
     # a = p.get_product(uuid.UUID('f49b3ac8-965f-11ed-958e-f889d2e645af'))
     # print(a)
     # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     # s = RequiredItems(data=['9fac422c-942b-11ed-a23f-f889d2e645af'])
     l = ['9fac422c-942b-11ed-a23f-f889d2e645af', '9fac422c-942b-11ed-a23f-f889d2e646af',
          '1fac422c-942b-11ed-a23f-f889d2e645af']
-    print(p.get_pid('media', 'red', [uuid.UUID(uid) for uid in l]))
+    print(get_pid('media', 'red', [uuid.UUID(uid) for uid in l]))
     # print(p.create_product('media4', ['row1', 'row2', 'row3', 'row5'], 'black', 'category', 'dname'))
     # print(p.update_product(pid=uuid.UUID('9fac422c-942b-11ed-a23f-f889d2e645af'), pname='sounds', color='black',
     #                        required_items=['row2', 'row2'], dname='sounds', category='soundss'))
