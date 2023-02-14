@@ -7,8 +7,10 @@ session = cluster.connect('model1')
 session.row_factory = dict_factory
 get_worker_query = session.prepare("SELECT * FROM user_worker ;")
 create_worker_query = session.prepare(
-    "INSERT INTO user_worker (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) ;")
+    "INSERT INTO user_worker (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
 
+class AlreadyExists(Exception):
+    pass
 
 def get_workers():
     workers = session.execute(get_worker_query)
@@ -18,8 +20,8 @@ def get_workers():
 def create_worker(f_name, l_name, password, username=None):
     if username is None:
         username = f_name + l_name
-    session.execute(create_worker_query, (username, f_name, l_name, password))
-
+    a = session.execute(create_worker_query, (username, f_name, l_name, password)).one()
+    return a['[applied]']
 
 if __name__ == '__main__':
     print(get_workers())

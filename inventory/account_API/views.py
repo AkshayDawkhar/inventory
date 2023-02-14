@@ -14,5 +14,7 @@ class accounts(APIView):
     def post(self, request):
         serializer = CreateWorkerSerializer(data=request.data)
         if serializer.is_valid():
-            accoutCQL.create_worker(**serializer.data)
+            worker = accoutCQL.create_worker(**serializer.data)
+            if worker:
+                return Response(data='error':['user Already Exists'],status=status.HTTP_208_ALREADY_REPORTED)
         return Response(data=accoutCQL.get_workers(), status=status.HTTP_200_OK)
