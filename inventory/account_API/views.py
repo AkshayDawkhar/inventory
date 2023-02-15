@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from . import cqlqueries as accoutCQL
-from .serializers import CreateWorkerSerializer
+from .serializers import CreateWorkerSerializer, CreateAdminSerializer
 
 
 # Create your views here.
@@ -16,7 +16,7 @@ class accounts(APIView):
         if serializer.is_valid():
             worker = accoutCQL.create_worker(**serializer.data)
             if worker:
-                return Response(data='error':['user Already Exists'],status=status.HTTP_208_ALREADY_REPORTED)
+                return Response(data={'error':['user Already Exists']},status=status.HTTP_208_ALREADY_REPORTED)
         return Response(data=accoutCQL.get_workers(), status=status.HTTP_200_OK)
 
 class account(APIView):
@@ -25,3 +25,17 @@ class account(APIView):
         if worker is None:
             return Response(data=None,status=status.HTTP_404_NOT_FOUND)
         return Response(data=worker,status=status.HTTP_200_OK)
+
+class admins(APIView):
+    def get(self, request):
+        admins = accoutCQL.get_admins()
+        return Response(data=admins, status=status.HTTP_200_OK)
+   
+    def post(self, request):
+        serializer = CreateAdminSerializer(data=request.data)
+        if serializer.is_valid():
+            admin = accoutCQL.create_admin(**serializer.data)
+            if admin:
+                return Response(data={'error':['user Already Exists']},status=status.HTTP_208_ALREADY_REPORTED)
+        return Response(data=accoutCQL.get_admins(), status=status.HTTP_200_OK)
+
