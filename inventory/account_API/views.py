@@ -39,3 +39,8 @@ class admins(APIView):
                 return Response(data={'error':['user Already Exists']},status=status.HTTP_208_ALREADY_REPORTED)
         return Response(data=accoutCQL.get_admins(), status=status.HTTP_200_OK)
 
+class admin(APIView):
+    def get(self, request,username):
+        admins = accoutCQL.get_admins(username=username)
+        return Response(data=admins, status=status.HTTP_200_OK)
+   
