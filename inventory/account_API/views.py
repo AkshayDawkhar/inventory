@@ -20,28 +20,33 @@ class accounts(APIView):
             return Response(data=accoutCQL.get_workers(), status=status.HTTP_200_OK)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class account(APIView):
-    def get(self, request,username):
+    def get(self, request, username):
         worker = accoutCQL.get_workers(username=username)
         if worker is None:
-            return Response(data=None,status=status.HTTP_404_NOT_FOUND)
-        return Response(data=worker,status=status.HTTP_200_OK)
+            return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+        return Response(data=worker, status=status.HTTP_200_OK)
+
 
 class admins(APIView):
     def get(self, request):
         admins = accoutCQL.get_admins()
         return Response(data=admins, status=status.HTTP_200_OK)
-   
+
     def post(self, request):
         serializer = CreateAdminSerializer(data=request.data)
         if serializer.is_valid():
             admin = accoutCQL.create_admin(**serializer.data)
-            if admin:
-                return Response(data={'error':['user Already Exists']},status=status.HTTP_208_ALREADY_REPORTED)
-        return Response(data=accoutCQL.get_admins(), status=status.HTTP_200_OK)
+            if not admin:
+                return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
+            return Response(data=accoutCQL.get_admins(), status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class admin(APIView):
-    def get(self, request,username):
+    def get(self, request, username):
         admins = accoutCQL.get_admins(username=username)
         return Response(data=admins, status=status.HTTP_200_OK)
-   
