@@ -12,6 +12,7 @@ create_admin_query = session.prepare(
     "INSERT INTO user_admin (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
 get_worker_query = session.prepare("SELECT username , fname , lname FROM user_worker WHERE username = ? LIMIT 1; ")
 get_admin_query = session.prepare("SELECT username , fname , lname FROM user_admin WHERE username = ? LIMIT 1; ")
+update_worker_query = session.prepare("UPDATE user_worker SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
 
 
 class AlreadyExists(Exception):
@@ -34,6 +35,10 @@ def create_worker(f_name, l_name, password, username=None):
     return a['[applied]']
 
 
+def update_worker(f_name, l_name, username):
+    return session.execute(update_worker_query, (f_name, l_name, username)).one()['[applied]']
+
+
 def get_admins(username=None):
     if username is None:
         admin = session.execute(get_admins_query)
@@ -51,4 +56,5 @@ def create_admin(f_name, l_name, password, username=None):
 
 
 if __name__ == '__main__':
-    print(get_workers())
+    # print(get_workers())
+    print(update_worker('a', 'a', 'a'))
