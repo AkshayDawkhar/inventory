@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from . import cqlqueries as accoutCQL
-from .serializers import CreateWorkerSerializer, CreateAdminSerializer
+from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer
 
 
 # Create your views here.
@@ -29,6 +29,17 @@ class account(APIView):
             return Response(data=None, status=status.HTTP_404_NOT_FOUND)
         return Response(data=worker, status=status.HTTP_200_OK)
 
+    def put(self, request, username):
+        serializer = UpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            applied = accoutCQL.update_worker(username=username, f_name=serializer.data.get('f_name'),
+                                              l_name=serializer.data.get('l_name'))
+            if not applied:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+            return Response(data=accoutCQL.get_workers(username=username), status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class admins(APIView):
     def get(self, request):
@@ -50,3 +61,14 @@ class admin(APIView):
     def get(self, request, username):
         admins = accoutCQL.get_admins(username=username)
         return Response(data=admins, status=status.HTTP_200_OK)
+
+    def put(self, request, username):
+        serializer = UpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            applied = accoutCQL.update_admin(username=username, f_name=serializer.data.get('f_name'),
+                                             l_name=serializer.data.get('l_name'))
+            if not applied:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+            return Response(data=accoutCQL.get_admins(username=username), status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
