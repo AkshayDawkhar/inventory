@@ -15,6 +15,7 @@ get_admin_query = session.prepare("SELECT username , fname , lname FROM user_adm
 update_worker_query = session.prepare("UPDATE user_worker SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
 update_admin_query = session.prepare("UPDATE user_admin SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
 update_worker_password_query = session.prepare("UPDATE user_worker SET password = ? WHERE username = ? IF EXISTS ;")
+update_admin_password_query = session.prepare("UPDATE user_admin SET password = ? WHERE username = ? IF EXISTS ;")
 
 
 class AlreadyExists(Exception):
@@ -65,8 +66,13 @@ def update_admin(f_name, l_name, username):
     return session.execute(update_admin_query, (f_name, l_name, username)).one()['[applied]']
 
 
+def update_admin_password(username, password):
+    return session.execute(update_admin_password_query, (password, username)).one()['[applied]']
+
+
 if __name__ == '__main__':
     # print(get_workers())
     # print(update_worker('a', 'a', 'a'))
     # print(update_admin('a', 'a', 'ankitad1'))
-    print(update_worker_password(username='a', password='2222w'))
+    # print(update_worker_password(username='a', password='2222w'))
+    print(update_admin_password(username='an1', password='2222w'))
