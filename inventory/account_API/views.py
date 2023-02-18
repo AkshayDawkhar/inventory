@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from . import cqlqueries as accoutCQL
-from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer
+from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer, UpdatePasswordSerializer
 
 
 # Create your views here.
@@ -35,6 +35,15 @@ class account(APIView):
             applied = accoutCQL.update_worker(username=username, f_name=serializer.data.get('f_name'),
                                               l_name=serializer.data.get('l_name'))
             if not applied:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+            return Response(data=accoutCQL.get_workers(username=username), status=status.HTTP_200_OK)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, username):
+        serializer = UpdatePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            if not accoutCQL.update_worker_password(username=username,password=serializer.data.get('password')):
                 return Response(data=None, status=status.HTTP_404_NOT_FOUND)
             return Response(data=accoutCQL.get_workers(username=username), status=status.HTTP_200_OK)
         else:
