@@ -18,3 +18,7 @@ class CreateAdminSerializer(serializers.Serializer):
 class UpdateSerializer(serializers.Serializer):
     f_name = serializers.CharField()
     l_name = serializers.CharField()
+
+
+class UpdatePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField()
