@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from . import cqlqueries as accoutCQL
 from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer, UpdatePasswordSerializer
+from django.contrib.auth.hashers import make_password, check_password
 
 
 # Create your views here.
@@ -14,7 +15,8 @@ class accounts(APIView):
     def post(self, request):
         serializer = CreateWorkerSerializer(data=request.data)
         if serializer.is_valid():
-            worker = accoutCQL.create_worker(**serializer.data)
+            worker = accoutCQL.create_worker(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
+                                             username=serializer.data.get('username'), password=make_password(serializer.data.get('password')))
             if not worker:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             return Response(data=accoutCQL.get_workers(), status=status.HTTP_200_OK)
