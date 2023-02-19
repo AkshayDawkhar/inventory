@@ -16,7 +16,8 @@ class accounts(APIView):
         serializer = CreateWorkerSerializer(data=request.data)
         if serializer.is_valid():
             worker = accoutCQL.create_worker(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
-                                             username=serializer.data.get('username'), password=make_password(serializer.data.get('password')))
+                                             username=serializer.data.get('username'),
+                                             password=make_password(serializer.data.get('password')))
             if not worker:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             return Response(data=accoutCQL.get_workers(), status=status.HTTP_200_OK)
@@ -60,7 +61,9 @@ class admins(APIView):
     def post(self, request):
         serializer = CreateAdminSerializer(data=request.data)
         if serializer.is_valid():
-            admin = accoutCQL.create_admin(**serializer.data)
+            admin = accoutCQL.create_admin(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
+                                           username=serializer.data.get('username'),
+                                           password=make_password(serializer.data.get('password')))
             if not admin:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             return Response(data=accoutCQL.get_admins(), status=status.HTTP_200_OK)
