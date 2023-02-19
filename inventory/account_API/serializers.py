@@ -21,4 +21,6 @@ class UpdateSerializer(serializers.Serializer):
 
 
 class UpdatePasswordSerializer(serializers.Serializer):
+    previous_password = serializers.CharField()
     password = serializers.CharField()
+    
