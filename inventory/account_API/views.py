@@ -46,7 +46,7 @@ class account(APIView):
     def patch(self, request, username):
         serializer = UpdatePasswordSerializer(data=request.data)
         if serializer.is_valid():
-            if not accoutCQL.update_worker_password(username=username, password=serializer.data.get('password')):
+            if not accoutCQL.update_worker_password(username=username, password=make_password(serializer.data.get('password'))):
                 return Response(data=None, status=status.HTTP_404_NOT_FOUND)
             return Response(data=accoutCQL.get_workers(username=username), status=status.HTTP_200_OK)
         else:
@@ -90,7 +90,7 @@ class admin(APIView):
     def patch(self, request, username):
         serializer = UpdatePasswordSerializer(data=request.data)
         if serializer.is_valid():
-            if not accoutCQL.update_admin_password(username=username, password=serializer.data.get('password')):
+            if not accoutCQL.update_admin_password(username=username, password=make_password(serializer.data.get('password'))):
                 return Response(data=None, status=status.HTTP_404_NOT_FOUND)
             return Response(data=accoutCQL.get_admins(username=username), status=status.HTTP_200_OK)
         else:
