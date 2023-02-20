@@ -5,14 +5,14 @@ class CreateWorkerSerializer(serializers.Serializer):
     username = serializers.CharField(default=None)
     f_name = serializers.CharField()
     l_name = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(min_length=)
 
 
 class CreateAdminSerializer(serializers.Serializer):
     username = serializers.CharField(default=None)
     f_name = serializers.CharField()
     l_name = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(min_length=8, max_length=32)
 
 
 class UpdateSerializer(serializers.Serializer):
@@ -22,5 +22,4 @@ class UpdateSerializer(serializers.Serializer):
 
 class UpdatePasswordSerializer(serializers.Serializer):
     previous_password = serializers.CharField()
-    password = serializers.CharField()
-    
+    password = serializers.CharField(min_length=8, max_length=32)
