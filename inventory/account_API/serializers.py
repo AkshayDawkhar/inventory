@@ -5,7 +5,7 @@ class CreateWorkerSerializer(serializers.Serializer):
     username = serializers.CharField(default=None)
     f_name = serializers.CharField()
     l_name = serializers.CharField()
-    password = serializers.CharField(min_length=)
+    password = serializers.CharField(min_length=8, max_length=32)
 
 
 class CreateAdminSerializer(serializers.Serializer):
