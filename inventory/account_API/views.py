@@ -131,5 +131,18 @@ class WorkerLogin(APIView):
                 return Response(data=None, status=status.HTTP_404_NOT_FOUND)
             if check_password(serializer.validated_data.get('password'), password):
                 return Response(data=True, status=status.HTTP_200_OK)
-            return Response(data=False,status=status.HTTP_401_UNAUTHORIZED)
+            return Response(data=False, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminLogin(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            password = accoutCQL.get_admin_password(serializer.validated_data.get('username'))
+            if password is None:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+            if check_password(serializer.validated_data.get('password'), password):
+                return Response(data=True, status=status.HTTP_200_OK)
+            return Response(data=False, status=status.HTTP_401_UNAUTHORIZED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
