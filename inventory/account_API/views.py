@@ -99,9 +99,11 @@ class admin(APIView):
         serializer = UpdatePasswordSerializer(data=request.data)
         if serializer.is_valid():
             if serializer.is_valid():
+                password = accoutCQL.get_admin_password(username=username)
+                if password is None:
+                    return Response(data=None, status=status.HTTP_404_NOT_FOUND)
                 if serializer.data.get('previous_password') != serializer.data.get('password'):
-                    if check_password(serializer.data.get('previous_password'),
-                                      accoutCQL.get_admin_password(username=username)):
+                    if check_password(serializer.data.get('previous_password'), password):
                         if not accoutCQL.update_admin_password(username=username,
                                                                password=make_password(serializer.data.get('password'))):
                             return Response(data=None, status=status.HTTP_404_NOT_FOUND)
