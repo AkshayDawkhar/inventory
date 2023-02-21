@@ -2,7 +2,8 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from . import cqlqueries as accoutCQL
-from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer, UpdatePasswordSerializer
+from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer, UpdatePasswordSerializer, \
+    LoginSerializer
 from django.contrib.auth.hashers import make_password, check_password
 
 
@@ -59,7 +60,8 @@ class account(APIView):
                     return Response(data={'error': ['invalid previous password']},
                                     status=status.HTTP_406_NOT_ACCEPTABLE)
             else:
-                return Response(data={'error': ['previous password and password is same']}, status=status.HTTP_409_CONFLICT)
+                return Response(data={'error': ['previous password and password is same']},
+                                status=status.HTTP_409_CONFLICT)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -118,3 +120,16 @@ class admin(APIView):
                                 status=status.HTTP_409_CONFLICT)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WorkerLogin(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            password = accoutCQL.get_worker_password(serializer.validated_data.get('username'))
+            if password is None:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+            if check_password(serializer.validated_data.get('password'), password):
+                return Response(data=True, status=status.HTTP_200_OK)
+            return Response(data=False,status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)

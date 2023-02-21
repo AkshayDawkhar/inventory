@@ -23,3 +23,8 @@ class UpdateSerializer(serializers.Serializer):
 class UpdatePasswordSerializer(serializers.Serializer):
     previous_password = serializers.CharField()
     password = serializers.CharField(min_length=8, max_length=32)
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
