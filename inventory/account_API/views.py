@@ -98,21 +98,20 @@ class admin(APIView):
     def patch(self, request, username):
         serializer = UpdatePasswordSerializer(data=request.data)
         if serializer.is_valid():
-            if serializer.is_valid():
-                password = accoutCQL.get_admin_password(username=username)
-                if password is None:
-                    return Response(data=None, status=status.HTTP_404_NOT_FOUND)
-                if serializer.data.get('previous_password') != serializer.data.get('password'):
-                    if check_password(serializer.data.get('previous_password'), password):
-                        if not accoutCQL.update_admin_password(username=username,
-                                                               password=make_password(serializer.data.get('password'))):
-                            return Response(data=None, status=status.HTTP_404_NOT_FOUND)
-                        return Response(data=accoutCQL.get_admins(username=username), status=status.HTTP_200_OK)
-                    else:
-                        return Response(data={'error': ['invalid previous password']},
-                                        status=status.HTTP_406_NOT_ACCEPTABLE)
+            password = accoutCQL.get_admin_password(username=username)
+            if password is None:
+                return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+            if serializer.data.get('previous_password') != serializer.data.get('password'):
+                if check_password(serializer.data.get('previous_password'), password):
+                    if not accoutCQL.update_admin_password(username=username,
+                                                           password=make_password(serializer.data.get('password'))):
+                        return Response(data=None, status=status.HTTP_404_NOT_FOUND)
+                    return Response(data=accoutCQL.get_admins(username=username), status=status.HTTP_200_OK)
                 else:
-                    return Response(data={'error': ['previous password and password is same']},
-                                    status=status.HTTP_409_CONFLICT)
+                    return Response(data={'error': ['invalid previous password']},
+                                    status=status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                return Response(data={'error': ['previous password and password is same']},
+                                status=status.HTTP_409_CONFLICT)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
