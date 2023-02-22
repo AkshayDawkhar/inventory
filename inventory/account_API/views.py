@@ -127,6 +127,12 @@ class admin(APIView):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, username):
+        applied = accoutCQL.delete_admin(username)
+        if applied:
+            return Response(data={}, status=status.HTTP_200_OK)
+        return Response(data={}, status=status.HTTP_404_NOT_FOUND)
+
 
 class WorkerLogin(APIView):
     def post(self, request):
