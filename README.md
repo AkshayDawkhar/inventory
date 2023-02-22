@@ -73,14 +73,14 @@ This Django API is designed to maintain and build products using the Cassandra N
 ```json
 {
   "category": "PCB",
-  "dname": "RS 1G",                             //name to display 
-  "color":"red",                                //default Black
+  "dname": "RS 1G", 
+  "color":"red",
   "required_items": [
-    "2b955212-9f1a-11ed-a285-f889d2e645af",     //pid of raw needed to create
+    "2b955212-9f1a-11ed-a285-f889d2e645af",
     "59851e5a-9f1a-11ed-b500-f889d2e645af"
     
   ],
-  "required_items_no": [4,6]      //number of raw needed as per required_items
+  "required_items_no": [4,6]
 }
 ```
 #### Trash
@@ -156,3 +156,32 @@ This Django API is designed to maintain and build products using the Cassandra N
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `discard_no`     | `INT`   | **Required**. number of product to discard |
+
+****get build details****
+```http
+  GET /build/edit/${uuid:pid}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|||||
+
+****Edit product build info****
+```http
+  PUT /build/edit/${uuid:pid}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `build_no`     | `INT`   | **Required**. to set product to build number|
+
+****Required****
+```http
+  POST /build/required/
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `pid`     | `uuid`   | **Required**. pid of product |
+| `rid`     | `uuid`   | **Required**. raw product id |
+| `numbers`     | `INT`   | **Required**. number of corresponding row product|
