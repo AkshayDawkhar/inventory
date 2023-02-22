@@ -18,6 +18,7 @@ update_worker_password_query = session.prepare("UPDATE user_worker SET password 
 update_admin_password_query = session.prepare("UPDATE user_admin SET password = ? WHERE username = ? IF EXISTS ;")
 get_admin_password_query = session.prepare("SELECT password FROM user_admin WHERE username = ? LIMIT 1;")
 get_worker_password_query = session.prepare("SELECT password FROM user_worker WHERE username = ? LIMIT 1;")
+delete_worker_query = session.prepare("DELETE from user_worker WHERE username = ? IF EXISTS;")
 
 
 class AlreadyExists(Exception):
@@ -53,6 +54,11 @@ def get_worker_password(username):
     if password is None:
         return None
     return password['password']
+
+
+def delete_worker(username):
+    return session.execute(delete_worker_query, (username,)).one()['[applied]']
+
 
 def get_admins(username=None):
     if username is None:
@@ -91,5 +97,6 @@ if __name__ == '__main__':
     # print(update_admin('a', 'a', 'ankitad1'))
     # print(update_worker_password(username='a', password='2222w'))
     # print(update_admin_password(username='an1', password='2222w'))
-    print(get_admin_password('m'))
-    print(get_worker_password('m'))
+    # print(get_admin_password('m'))
+    # print(get_worker_password('m'))
+    print(delete_worker(username='a'))
