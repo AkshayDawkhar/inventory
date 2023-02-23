@@ -20,6 +20,7 @@ get_admin_password_query = session.prepare("SELECT password FROM user_admin WHER
 get_worker_password_query = session.prepare("SELECT password FROM user_worker WHERE username = ? LIMIT 1;")
 delete_worker_query = session.prepare("DELETE from user_worker WHERE username = ? IF EXISTS;")
 delete_admin_query = session.prepare("DELETE from user_admin WHERE username = ? IF EXISTS;")
+get_worker_username_query = session.prepare("SELECT username FROM user_worker WHERE username = ?;")
 
 
 class AlreadyExists(Exception):
@@ -33,6 +34,15 @@ def get_workers(username=None):
     else:
         worker = session.execute(get_worker_query, (username,)).one()
         return worker
+
+
+def get_worker_username(username):
+    username = session.execute(get_worker_username_query, (username,)).one()
+    if username is None:
+        return None
+    return username.get('username')
+    # return username
+    # return None if 'username' in  username else username['username']
 
 
 def create_worker(f_name, l_name, password, username=None):
@@ -105,4 +115,5 @@ if __name__ == '__main__':
     # print(get_admin_password('m'))
     # print(get_worker_password('m'))
     # print(delete_worker(username='a'))
-    print(delete_admin(username='a'))
+    # print(delete_admin(username='a'))
+    print(bool(get_worker_username('mongodb')))
