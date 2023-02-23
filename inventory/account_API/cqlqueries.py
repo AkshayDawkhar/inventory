@@ -21,6 +21,7 @@ get_worker_password_query = session.prepare("SELECT password FROM user_worker WH
 delete_worker_query = session.prepare("DELETE from user_worker WHERE username = ? IF EXISTS;")
 delete_admin_query = session.prepare("DELETE from user_admin WHERE username = ? IF EXISTS;")
 get_worker_username_query = session.prepare("SELECT username FROM user_worker WHERE username = ?;")
+get_admin_username_query = session.prepare("SELECT username FROM user_admin WHERE username = ?;")
 
 
 class AlreadyExists(Exception):
@@ -104,6 +105,13 @@ def get_admin_password(username):
 
 def delete_admin(username):
     return session.execute(delete_admin_query, (username,)).one()['[applied]']
+
+
+def get_admin_username(username):
+    username = session.execute(get_admin_username_query, (username,)).one()
+    if username is None:
+        return None
+    return username.get('username')
 
 
 if __name__ == '__main__':
