@@ -28,3 +28,8 @@ class UpdatePasswordSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
+
+class GenerateUsernameSerializer(serializers.Serializer):
+    f_name = serializers.CharField()
+    l_name = serializers.CharField()

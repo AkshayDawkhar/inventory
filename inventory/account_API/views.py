@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from . import cqlqueries as accoutCQL
 from .serializers import CreateWorkerSerializer, CreateAdminSerializer, UpdateSerializer, UpdatePasswordSerializer, \
-    LoginSerializer
+    LoginSerializer, GenerateUsernameSerializer
 from django.contrib.auth.hashers import make_password, check_password
+from . import utility as utility
 
 
 # Create your views here.
@@ -158,3 +159,12 @@ class AdminLogin(APIView):
                 return Response(data=True, status=status.HTTP_200_OK)
             return Response(data=False, status=status.HTTP_401_UNAUTHORIZED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class WorkerUsername(APIView):
+    def get(self, request):
+        serializer = GenerateUsernameSerializer(data=request.data)
+        if serializer.is_valid():
+            username = utility.generate_unique_usernames(f_name=serializer.validated_data.get('f_name'),
+                                                         l_name=serializer.validated_data.get('l_name'))
+            return Response(data={'username': username}, status=status.HTTP_200_OK)

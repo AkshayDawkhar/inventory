@@ -1,5 +1,5 @@
 import random
-import cqlqueries as accountCQL
+from . import cqlqueries as accountCQL
 
 
 def generate_username(f_name, l_name, b):
@@ -13,7 +13,6 @@ def generate_unique_usernames(f_name, l_name):
     while accountCQL.get_worker_username(username):
         b = b+10
         username = generate_username(f_name, l_name, b=b)
-        print(username, b)
     return username
 
 
