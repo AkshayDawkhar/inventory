@@ -177,11 +177,9 @@ This Django API is designed to maintain and build products using the Cassandra N
 
 ****Required****
 ```http
-  POST /build/required/
+  GWT /build/required/${uuid:pid}
 ```
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `pid`     | `uuid`   | **Required**. pid of product |
-| `rid`     | `uuid`   | **Required**. raw product id |
-| `numbers`     | `INT`   | **Required**. number of corresponding row product|
+||||
