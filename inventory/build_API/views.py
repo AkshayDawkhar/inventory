@@ -69,20 +69,20 @@ class RequiredItem(APIView):
         a = build_cql.get_required_items(pid)
         return Response(data=a, status=status.HTTP_200_OK)
 
-    def delete(self, request, pid):
-        a = build_cql.delete_required_items(pid)
-        return Response(data=a, status=status.HTTP_200_OK)
+    # def delete(self, request, pid):
+    #     a = build_cql.delete_required_items(pid)
+    #     return Response(data=a, status=status.HTTP_200_OK)
 
 
-class RequiredItems(APIView):
-    def post(self, request):
-        s = RequiredItemSerializer(data=request.data)
-        if s.is_valid():
-            build_cql.create_required_item(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')),
-                                   numbers=s.data.get('numbers'))
-            return Response(data={}, status=status.HTTP_200_OK)
-        else:
-            return Response(data=s.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
+# class RequiredItems(APIView):
+#     def post(self, request):
+#         s = RequiredItemSerializer(data=request.data)
+#         if s.is_valid():
+#             build_cql.create_required_item(pid=uuid.UUID(s.data.get('pid')), rid=uuid.UUID(s.data.get('rid')),
+#                                    numbers=s.data.get('numbers'))
+#             return Response(data={}, status=status.HTTP_200_OK)
+#         else:
+#             return Response(data=s.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 class RequiredFor(APIView):
