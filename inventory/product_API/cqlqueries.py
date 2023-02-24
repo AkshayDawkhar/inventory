@@ -56,25 +56,25 @@ get_trash_query = session.prepare(
 
 
 def get_product(pid):
-    a = session.execute(get_product_query, (pid,))
+    a = session.execute(get_product_query, (pid,)).one()
     if not a:
         raise NotFound("Product Not Found %s" % (pid,))
 
-    a.one()['required_items'] = list(a.one()['required_items'])
-    return a.one()
+    a['required_items'] = list(a.get('required_items'))
+    return a
 
 
 def product_list():
     # sp = session.prepare("SELECT dname , pid FROM product_list1 WHERE pname = ?")
-    a = session.execute(product_list_query)
-    return a.all()
+    return session.execute(product_list_query).all()
+    # return a.all()
 
 
 def get_pid(pname, color, required_items):
-    r = session.execute(get_pid_query, (pname, color, set(required_items)))
-    if not r.one():
+    r = session.execute(get_pid_query, (pname, color, set(required_items))).one()
+    if not r:
         raise NotFound('product not found')
-    return r.one()['pid']
+    return r.get('pid')
 
 
 def create_product(pname, required_items, color, category, dname, required_items_no=None, pid=None):
@@ -82,7 +82,7 @@ def create_product(pname, required_items, color, category, dname, required_items
         pid = uuid.uuid1()
         build_cql.create_build(pid=pid)
     r = session.execute(create_product_query, (pname, set(required_items), color, category, dname, pid))
-    if r.one()['[applied]']:
+    if r.was_applied:
         r1 = session.execute(create_by_id_query,
                              (pid, set(required_items), pname, color, dname, category,))
         # build_cql.create_build(pid=pid)
@@ -100,21 +100,21 @@ def delete_product(pid=None, pname=None, required_items=None, color=None, moveto
         it = get_product(pid)
         # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
         session.execute(insert_into_trash_query, (
-            it['pname'], it['required_items'], it['color'], it['category'], it['dname'], it['pid']))
+            it.get('pname'), it.get('required_items'), it.get('color'), it.get('category'), it.get('dname'), it.get('pid')))
         build_cql.delete_build(pid=pid, moveto_trash=moveto_trash)
 
     if removefrom_product_list1_by_id:
         if pname is None:
             av = get_product(pid)
-            pname = av['pname']
-            required_items = av['required_items']
-            color = av['color']
+            pname = av.get('pname')
+            required_items = av.get('required_items')
+            color = av.get('color')
         a = session.execute(delete_product_by_id_query, (pid,))
         build_cql.delete_required_items(pid=pid, moveto_trash=moveto_trash)
         # return a
     if removefrom_product_list1:
         a1 = session.execute(delete_product_query, (pname, set(required_items), color))
-    return a1.one()['[applied]']
+    return a1.was_applied
 
 
 def update_product(pid, pname, color, required_items, dname, category, required_items_no):
@@ -128,8 +128,8 @@ def update_product(pid, pname, color, required_items, dname, category, required_
         pass
     a = session.execute(update_by_id_query, (pname, set(required_items), color, category, dname, pid))
     # FOR deleting the product from product_list1 calling delete product
-    tf = delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt['pname'],
-                        required_items=gt['required_items'], color=gt['color'])
+    tf = delete_product(moveto_trash=False, removefrom_product_list1_by_id=False, pname=gt.get('pname'),
+                        required_items=gt.get('required_items'), color=gt.get('color'))
     gtt = session.execute(create_product_query, (pname, set(required_items), color, category, dname, pid))
     build_cql.delete_required_items(pid=pid, moveto_trash=False)
     build_cql.create_required_items(pid=pid, rid=required_items, numbers=required_items_no)
@@ -145,10 +145,10 @@ def restore(pid):
     a = session.execute(restore_fromTrash_query, (pid,)).one()
     ra = build_cql.get_required_trash(pid=pid)
     # session.execute(delete_Trash_query, (pid,))
-    # create_product(pname=a['pname'],required_items=a['required_items'],color=a['color'],category=a['category'])
+    # create_product(pname=a.get('pname'),required_items=a.get('required_items'),color=a.get('color'),category=a.get('category'))
     if a is not None:
         try:
-            get_pid(pname=a['pname'], color=a['color'], required_items=a['required_items'])
+            get_pid(pname=a.get('pname'), color=a.get('color'), required_items=a.get('required_items'))
             raise Conflict
         except NotFound:
             session.execute(delete_Trash_query, (pid,))
@@ -161,15 +161,14 @@ def restore(pid):
 
 
 def delete_trash(pid):
-    a = session.execute(delete_Trash_query, (pid,)).one()['[applied]']
-    return a
+    return session.execute(delete_Trash_query, (pid,)).was_applied
 
 
 def get_trash(pid):
     a = session.execute(get_trash_query, (pid,)).one()
     if a is None:
         raise NotFound
-    a['required_items'] = list(a['required_items'])
+    a['required_items'] = list(a.get('required_items'))
     return a
 
 
