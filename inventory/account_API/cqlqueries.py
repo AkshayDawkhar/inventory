@@ -49,27 +49,26 @@ def get_worker_username(username):
 def create_worker(f_name, l_name, password, username=None):
     if username is None:
         username = f_name + l_name
-    a = session.execute(create_worker_query, (username, f_name, l_name, password)).one()
-    return a['[applied]']
+    return session.execute(create_worker_query, (username, f_name, l_name, password)).was_applied
 
 
 def update_worker(f_name, l_name, username):
-    return session.execute(update_worker_query, (f_name, l_name, username)).one()['[applied]']
+    return session.execute(update_worker_query, (f_name, l_name, username)).was_applied
 
 
 def update_worker_password(username, password):
-    return session.execute(update_worker_password_query, (password, username)).one()['[applied]']
+    return session.execute(update_worker_password_query, (password, username)).was_applied
 
 
 def get_worker_password(username):
     password = session.execute(get_worker_password_query, (username,)).one()
     if password is None:
         return None
-    return password['password']
+    return password.get('password')
 
 
 def delete_worker(username):
-    return session.execute(delete_worker_query, (username,)).one()['[applied]']
+    return session.execute(delete_worker_query, (username,)).was_applied
 
 
 def get_admins(username=None):
@@ -84,27 +83,26 @@ def get_admins(username=None):
 def create_admin(f_name, l_name, password, username=None):
     if username is None:
         username = f_name + l_name
-    a = session.execute(create_admin_query, (username, f_name, l_name, password)).one()
-    return a['[applied]']
+    return session.execute(create_admin_query, (username, f_name, l_name, password)).was_applied
 
 
 def update_admin(f_name, l_name, username):
-    return session.execute(update_admin_query, (f_name, l_name, username)).one()['[applied]']
+    return session.execute(update_admin_query, (f_name, l_name, username)).was_applied
 
 
 def update_admin_password(username, password):
-    return session.execute(update_admin_password_query, (password, username)).one()['[applied]']
+    return session.execute(update_admin_password_query, (password, username)).was_applied
 
 
 def get_admin_password(username):
     password = session.execute(get_admin_password_query, (username,)).one()
     if password is None:
         return None
-    return password['password']
+    return password.get('password')
 
 
 def delete_admin(username):
-    return session.execute(delete_admin_query, (username,)).one()['[applied]']
+    return session.execute(delete_admin_query, (username,)).was_applied
 
 
 def get_admin_username(username):
