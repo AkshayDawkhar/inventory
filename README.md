@@ -177,9 +177,47 @@ This Django API is designed to maintain and build products using the Cassandra N
 
 ****Required****
 ```http
-  GWT /build/required/${uuid:pid}
+  GET /build/required/${uuid:pid}
 ```
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 ||||
+
+### Account
+****GET all workers account****
+```http
+  GET /account/
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|      |    |         |
+
+****create worker account****
+```http
+  POST /account/
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|f_name      |`Text`    |**required**. first name of user         |
+|l_name      |`Text`    |**required**. last name of user         |
+|username    |`Text`    |**required**. username for user         |
+|password    |`Text`    |**required**. password for user         |
+
+****GET workers account****
+```http
+  GET /account/${string:username}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|      |    |         |
+
+****Edit workers account****
+```http
+  PUT /account/${string:username}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|f_name      |`Text`    |**required**. first name of user  |
+|l_name      |`Text`    |**required**. last name of user   |
+
