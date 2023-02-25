@@ -7,20 +7,20 @@ session.row_factory = dict_factory
 get_workers_query = session.prepare("SELECT username , fname , lname FROM user_worker ;")
 get_admins_query = session.prepare("SELECT username , fname , lname FROM user_admin ;")
 create_worker_query = session.prepare(
-    "INSERT INTO user_worker (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
+    "INSERT INTO user_worker (mail ,username , fname , lname , password  ) VALUES (?, ?, ?,?, ?) IF NOT EXISTS;")
 create_admin_query = session.prepare(
     "INSERT INTO user_admin (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
-get_worker_query = session.prepare("SELECT username , fname , lname FROM user_worker WHERE username = ? LIMIT 1; ")
+get_worker_query = session.prepare("SELECT username , fname , lname FROM user_worker WHERE mail = ? LIMIT 1; ")
 get_admin_query = session.prepare("SELECT username , fname , lname FROM user_admin WHERE username = ? LIMIT 1; ")
-update_worker_query = session.prepare("UPDATE user_worker SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
+update_worker_query = session.prepare("UPDATE user_worker SET fname = ? , lname = ? WHERE mail = ? IF EXISTS ;")
 update_admin_query = session.prepare("UPDATE user_admin SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
-update_worker_password_query = session.prepare("UPDATE user_worker SET password = ? WHERE username = ? IF EXISTS ;")
+update_worker_password_query = session.prepare("UPDATE user_worker SET password = ? WHERE mail = ? IF EXISTS ;")
 update_admin_password_query = session.prepare("UPDATE user_admin SET password = ? WHERE username = ? IF EXISTS ;")
 get_admin_password_query = session.prepare("SELECT password FROM user_admin WHERE username = ? LIMIT 1;")
-get_worker_password_query = session.prepare("SELECT password FROM user_worker WHERE username = ? LIMIT 1;")
-delete_worker_query = session.prepare("DELETE from user_worker WHERE username = ? IF EXISTS;")
+get_worker_password_query = session.prepare("SELECT password FROM user_worker WHERE mail = ? LIMIT 1;")
+delete_worker_query = session.prepare("DELETE from user_worker WHERE mail = ? IF EXISTS;")
 delete_admin_query = session.prepare("DELETE from user_admin WHERE username = ? IF EXISTS;")
-get_worker_username_query = session.prepare("SELECT username FROM user_worker WHERE username = ?;")
+get_worker_username_query = session.prepare("SELECT username FROM user_worker WHERE mail = ?;")
 get_admin_username_query = session.prepare("SELECT username FROM user_admin WHERE username = ?;")
 
 

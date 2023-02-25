@@ -30,7 +30,7 @@ def test_cassandra():
     session.prepare("CREATE MATERIALIZED VIEW orders_by_pid AS SELECT * FROM orders WHERE pid IS NOT NULL AND date IS NOT NULL  AND numbers IS NOT NULL and timestamp IS NOT NULL PRIMARY KEY ( pid ,date) ;")
     session.execute("CREATE TABLE complete_order ( date date ,pid uuid , number counter,PRIMARY KEY (date , pid)) ;")
     session.execute("CREATE TABLE complete_build ( date date ,pid uuid , numbers int ,PRIMARY KEY (date , pid)) ;")
-    session.execute("CREATE TABLE user_worker ( username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
+    session.execute("CREATE TABLE user_worker ( mail text ,username text , fname text , lname text ,password text , PRIMARY KEY (mail)) ;")
     session.execute("CREATE TABLE user_worker ( username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
     print('done')
     # con = connection.register_connection('cluster', session=sec)
