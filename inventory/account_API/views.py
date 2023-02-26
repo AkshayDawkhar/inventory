@@ -86,7 +86,7 @@ class admins(APIView):
                                            password=make_password(serializer.data.get('password')))
             if not admin:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
-            return Response(data=accoutCQL.get_admins(), status=status.HTTP_200_OK)
+            return Response(data=None, status=status.HTTP_201_CREATED)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
