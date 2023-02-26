@@ -4,13 +4,13 @@ from cassandra.cluster import dict_factory
 cluster = Cluster(['127.0.0.1'])
 session = cluster.connect('model1')
 session.row_factory = dict_factory
-get_workers_query = session.prepare("SELECT username , fname , lname FROM user_worker ;")
+get_workers_query = session.prepare("SELECT username , fname , lname, mail FROM user_worker ;")
 get_admins_query = session.prepare("SELECT username , fname , lname FROM user_admin ;")
 create_worker_query = session.prepare(
     "INSERT INTO user_worker (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
 create_admin_query = session.prepare(
     "INSERT INTO user_admin (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
-get_worker_query = session.prepare("SELECT username , fname , lname FROM user_worker WHERE username = ? LIMIT 1; ")
+get_worker_query = session.prepare("SELECT username , fname , lname,mail FROM user_worker WHERE username = ? LIMIT 1; ")
 get_admin_query = session.prepare("SELECT username , fname , lname FROM user_admin WHERE username = ? LIMIT 1; ")
 update_worker_query = session.prepare("UPDATE user_worker SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
 update_admin_query = session.prepare("UPDATE user_admin SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
