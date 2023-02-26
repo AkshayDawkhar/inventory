@@ -7,7 +7,7 @@ session.row_factory = dict_factory
 get_workers_query = session.prepare("SELECT username , fname , lname, mail FROM user_worker ;")
 get_admins_query = session.prepare("SELECT username , fname , lname FROM user_admin ;")
 create_worker_query = session.prepare(
-    "INSERT INTO user_worker (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
+    "INSERT INTO user_worker (username , fname , lname , password , mail ) VALUES ( ?, ?,?, ?,?) IF NOT EXISTS;")
 create_admin_query = session.prepare(
     "INSERT INTO user_admin (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
 get_worker_query = session.prepare("SELECT username , fname , lname,mail FROM user_worker WHERE username = ? LIMIT 1; ")
@@ -46,10 +46,10 @@ def get_worker_username(username):
     # return None if 'username' in  username else username['username']
 
 
-def create_worker(f_name, l_name, password, username=None):
+def create_worker(f_name, l_name, password, mail, username=None, ):
     if username is None:
         username = f_name + l_name
-    return session.execute(create_worker_query, (username, f_name, l_name, password)).was_applied
+    return session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
 
 
 def update_worker(f_name, l_name, username):
