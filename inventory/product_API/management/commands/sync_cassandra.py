@@ -31,7 +31,7 @@ def test_cassandra():
     session.execute("CREATE TABLE complete_order ( date date ,pid uuid , number counter,PRIMARY KEY (date , pid)) ;")
     session.execute("CREATE TABLE complete_build ( date date ,pid uuid , numbers int ,PRIMARY KEY (date , pid)) ;")
     session.execute("CREATE TABLE user_worker ( mail text ,username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
-    session.execute("CREATE TABLE user_worker ( username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
+    session.execute("CREATE TABLE user_admin ( mail text  ,username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
     print('done')
     # con = connection.register_connection('cluster', session=sec)
     # create_keyspace_simple('model1', 1, connections=['cluster'])
