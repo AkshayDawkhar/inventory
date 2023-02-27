@@ -82,7 +82,7 @@ class admins(APIView):
         serializer = CreateAdminSerializer(data=request.data)
         if serializer.is_valid():
             admin = accoutCQL.create_admin(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
-                                           username=serializer.data.get('username'),
+                                           username=serializer.data.get('username'),mail=serializer.data.get('mail'),
                                            password=make_password(serializer.data.get('password')))
             if not admin:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)

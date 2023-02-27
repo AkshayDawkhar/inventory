@@ -8,11 +8,13 @@ class CreateWorkerSerializer(serializers.Serializer):
     password = serializers.CharField(min_length=8, max_length=32)
     mail = serializers.EmailField()
 
+
 class CreateAdminSerializer(serializers.Serializer):
     username = serializers.CharField()
     f_name = serializers.CharField()
     l_name = serializers.CharField()
     password = serializers.CharField(min_length=8, max_length=32)
+    mail = serializers.EmailField()
 
 
 class UpdateSerializer(serializers.Serializer):
