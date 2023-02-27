@@ -9,7 +9,7 @@ get_admins_query = session.prepare("SELECT username , fname , lname, mail FROM u
 create_worker_query = session.prepare(
     "INSERT INTO user_worker (username , fname , lname , password , mail ) VALUES ( ?, ?,?, ?,?) IF NOT EXISTS;")
 create_admin_query = session.prepare(
-    "INSERT INTO user_admin (username , fname , lname , password  ) VALUES ( ?, ?,?, ?) IF NOT EXISTS;")
+    "INSERT INTO user_admin (username , fname , lname , password , mail  ) VALUES (?, ?, ?,?, ?) IF NOT EXISTS;")
 get_worker_query = session.prepare("SELECT username , fname , lname,mail FROM user_worker WHERE username = ? LIMIT 1; ")
 get_admin_query = session.prepare("SELECT username , fname , lname,mail FROM user_admin WHERE username = ? LIMIT 1; ")
 update_worker_query = session.prepare("UPDATE user_worker SET fname = ? , lname = ? WHERE username = ? IF EXISTS ;")
@@ -80,10 +80,10 @@ def get_admins(username=None):
         return admin
 
 
-def create_admin(f_name, l_name, password, username=None):
+def create_admin(f_name, l_name, password, mail, username=None):
     if username is None:
         username = f_name + l_name
-    return session.execute(create_admin_query, (username, f_name, l_name, password)).was_applied
+    return session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
 
 
 def update_admin(f_name, l_name, username):
