@@ -23,6 +23,9 @@ delete_admin_query = session.prepare("DELETE from user_admin WHERE username = ? 
 get_worker_username_query = session.prepare("SELECT username FROM user_worker WHERE username = ?;")
 get_admin_username_query = session.prepare("SELECT username FROM user_admin WHERE username = ?;")
 register_mail_worker_query = session.prepare("INSERT INTO reg_mail_worker (mail) VALUES (?) IF NOT EXISTS;")
+get_all_mail_worker_query = session.prepare("SELECT * FROM reg_mail_worker ;")
+get_mail_worker_query = session.prepare("SELECT * FROM reg_mail_worker WHERE mail = ? LIMIT 1;")
+remove_mail_worker_query = session.prepare("DELETE from reg_mail_worker  WHERE mail = ? IF EXISTS;")
 
 
 class AlreadyExists(Exception):
