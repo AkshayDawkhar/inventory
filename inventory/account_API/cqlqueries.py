@@ -53,7 +53,8 @@ def get_worker_username(username):
 def create_worker(f_name, l_name, password, mail, username=None, ):
     if username is None:
         username = f_name + l_name
-    return session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
+    if register_mail_worker(mail):
+        return session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
 
 
 def update_worker(f_name, l_name, username):
@@ -72,6 +73,8 @@ def get_worker_password(username):
 
 
 def delete_worker(username):
+    worker = get_workers(username=username)
+    remove_mail_worker(worker['mail'])
     return session.execute(delete_worker_query, (username,)).was_applied
 
 
