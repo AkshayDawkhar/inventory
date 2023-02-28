@@ -79,6 +79,12 @@ def register_mail_worker(mail):
     return session.execute(register_mail_worker_query, (mail,)).was_applied
 
 
+def get_mail_worker(mail=None):
+    if mail is None:
+        return session.execute(get_all_mail_worker_query).all()
+    return session.execute(get_mail_worker_query, (mail,)).one()
+
+
 def get_admins(username=None):
     if username is None:
         admin = session.execute(get_admins_query)
@@ -131,4 +137,5 @@ if __name__ == '__main__':
     # print(delete_worker(username='a'))
     # print(delete_admin(username='a'))
     # print(bool(get_worker_username('mongodb')))
-    print(register_mail_worker('akshay'))
+    # print(register_mail_worker('akshay'))
+    print(get_mail_worker(mail='akshay'))
