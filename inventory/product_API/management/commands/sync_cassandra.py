@@ -33,6 +33,7 @@ def test_cassandra():
     session.execute("CREATE TABLE user_worker ( mail text ,username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
     session.execute("CREATE TABLE user_admin ( mail text  ,username text , fname text , lname text ,password text , PRIMARY KEY (username)) ;")
     session.execute("CREATE TABLE reg_mail_worker (mail text PRIMARY KEY ) ;")
+    session.execute("CREATE TABLE reg_mail_admin (mail text PRIMARY KEY ) ;")
     print('done')
     # con = connection.register_connection('cluster', session=sec)
     # create_keyspace_simple('model1', 1, connections=['cluster'])
