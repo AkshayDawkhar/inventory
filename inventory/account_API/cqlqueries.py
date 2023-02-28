@@ -22,6 +22,7 @@ delete_worker_query = session.prepare("DELETE from user_worker WHERE username = 
 delete_admin_query = session.prepare("DELETE from user_admin WHERE username = ? IF EXISTS;")
 get_worker_username_query = session.prepare("SELECT username FROM user_worker WHERE username = ?;")
 get_admin_username_query = session.prepare("SELECT username FROM user_admin WHERE username = ?;")
+register_mail_worker_query = session.prepare("INSERT INTO reg_mail_worker (mail) VALUES (?) IF NOT EXISTS;")
 
 
 class AlreadyExists(Exception):
@@ -69,6 +70,10 @@ def get_worker_password(username):
 
 def delete_worker(username):
     return session.execute(delete_worker_query, (username,)).was_applied
+
+
+def register_mail_worker(mail):
+    return session.execute(register_mail_worker_query, (mail,)).was_applied
 
 
 def get_admins(username=None):
@@ -122,4 +127,5 @@ if __name__ == '__main__':
     # print(get_worker_password('m'))
     # print(delete_worker(username='a'))
     # print(delete_admin(username='a'))
-    print(bool(get_worker_username('mongodb')))
+    # print(bool(get_worker_username('mongodb')))
+    print(register_mail_worker('akshay'))
