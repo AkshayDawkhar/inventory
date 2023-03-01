@@ -109,7 +109,8 @@ def get_admins(username=None):
 def create_admin(f_name, l_name, password, mail, username=None):
     if username is None:
         username = f_name + l_name
-    return session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
+    if register_mail_admin(mail):
+        return session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
 
 
 def update_admin(f_name, l_name, username):
@@ -128,6 +129,8 @@ def get_admin_password(username):
 
 
 def delete_admin(username):
+    worker = get_admins(username=username)
+    remove_mail_admin(worker['mail'])
     return session.execute(delete_admin_query, (username,)).was_applied
 
 
@@ -136,6 +139,20 @@ def get_admin_username(username):
     if username is None:
         return None
     return username.get('username')
+
+
+def register_mail_admin(mail):
+    return session.execute(register_mail_admin_query, (mail,)).was_applied
+
+
+def get_mail_admin(mail=None):
+    if mail is None:
+        return session.execute(get_all_mail_admin_query).all()
+    return session.execute(get_mail_admin_query, (mail,)).one()
+
+
+def remove_mail_admin(mail):
+    return session.execute(remove_mail_admin_query, (mail,)).was_applied
 
 
 if __name__ == '__main__':
