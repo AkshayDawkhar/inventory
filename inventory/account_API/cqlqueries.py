@@ -37,6 +37,10 @@ class AlreadyExists(Exception):
     pass
 
 
+class EmailAlreadyExists(AlreadyExists):
+    pass
+
+
 def get_workers(username=None):
     if username is None:
         workers = session.execute(get_workers_query)
@@ -58,8 +62,9 @@ def get_worker_username(username):
 def create_worker(f_name, l_name, password, mail, username=None, ):
     if username is None:
         username = f_name + l_name
-    if register_mail_worker(mail):
-        return session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
+    if not register_mail_worker(mail):
+        raise EmailAlreadyExists
+    return session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
 
 
 def update_worker(f_name, l_name, username):
@@ -109,8 +114,9 @@ def get_admins(username=None):
 def create_admin(f_name, l_name, password, mail, username=None):
     if username is None:
         username = f_name + l_name
-    if register_mail_admin(mail):
-        return session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
+    if not register_mail_admin(mail):
+        raise EmailAlreadyExists
+    return session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
 
 
 def update_admin(f_name, l_name, username):
