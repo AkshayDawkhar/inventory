@@ -60,11 +60,13 @@ def get_worker_username(username):
 
 
 def create_worker(f_name, l_name, password, mail, username=None, ):
-    if username is None:
-        username = f_name + l_name
-    if not register_mail_worker(mail):
+    if get_mail_worker(mail):
         raise EmailAlreadyExists
-    return session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
+    applied = session.execute(create_worker_query, (username, f_name, l_name, password, mail)).was_applied
+    if applied:
+        if not register_mail_worker(mail):
+            raise EmailAlreadyExists
+    return applied
 
 
 def update_worker(f_name, l_name, username):
@@ -112,11 +114,13 @@ def get_admins(username=None):
 
 
 def create_admin(f_name, l_name, password, mail, username=None):
-    if username is None:
-        username = f_name + l_name
-    if not register_mail_admin(mail):
+    if get_mail_admin(mail):
         raise EmailAlreadyExists
-    return session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
+    applied = session.execute(create_admin_query, (username, f_name, l_name, password, mail)).was_applied
+    if applied:
+        if not register_mail_admin(mail):
+            raise EmailAlreadyExists
+    return applied
 
 
 def update_admin(f_name, l_name, username):
