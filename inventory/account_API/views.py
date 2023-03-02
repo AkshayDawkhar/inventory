@@ -17,9 +17,12 @@ class accounts(APIView):
     def post(self, request):
         serializer = CreateWorkerSerializer(data=request.data)
         if serializer.is_valid():
-            worker = accoutCQL.create_worker(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
-                                             username=serializer.data.get('username'),mail=serializer.data.get('mail'),
-                                             password=make_password(serializer.data.get('password')))
+            try:
+                worker = accoutCQL.create_worker(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
+                                                 username=serializer.data.get('username'), mail=serializer.data.get('mail'),
+                                                 password=make_password(serializer.data.get('password')))
+            except accoutCQL.EmailAlreadyExists:
+                return Response(data={'error': ['Email Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             if not worker:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             return Response(data=None, status=status.HTTP_201_CREATED)
@@ -81,9 +84,12 @@ class admins(APIView):
     def post(self, request):
         serializer = CreateAdminSerializer(data=request.data)
         if serializer.is_valid():
-            admin = accoutCQL.create_admin(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
-                                           username=serializer.data.get('username'),mail=serializer.data.get('mail'),
-                                           password=make_password(serializer.data.get('password')))
+            try:
+                admin = accoutCQL.create_admin(f_name=serializer.data.get('f_name'), l_name=serializer.data.get('l_name'),
+                                               username=serializer.data.get('username'),mail=serializer.data.get('mail'),
+                                               password=make_password(serializer.data.get('password')))
+            except accoutCQL.EmailAlreadyExists:
+                return Response(data={'error': ['Email Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             if not admin:
                 return Response(data={'error': ['user Already Exists']}, status=status.HTTP_208_ALREADY_REPORTED)
             return Response(data=None, status=status.HTTP_201_CREATED)
