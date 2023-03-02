@@ -135,8 +135,10 @@ def get_admin_password(username):
 
 
 def delete_admin(username):
-    worker = get_admins(username=username)
-    remove_mail_admin(worker['mail'])
+    admin = get_admins(username=username)
+    if admin is None:
+        return None
+    remove_mail_admin(admin['mail'])
     return session.execute(delete_admin_query, (username,)).was_applied
 
 
