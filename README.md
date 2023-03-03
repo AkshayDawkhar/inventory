@@ -30,8 +30,8 @@ pip install -r requirements.txt
 ```
 runserver
 ```bash
+python sync_cassandra 
 cd inventory
-python manage.py sync_cassandra 
 python manage.py runserver
 ```
 ## API Reference
