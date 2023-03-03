@@ -9,7 +9,7 @@ def test_cassandra():
         os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
 
     cluster = Cluster(['127.0.0.1'])
-    session = cluster.connect('model1')
+    session = cluster.connect()
     print('Connected to the db')
     # session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_iteams frozen<set <text >> ,PRIMARY KEY (pname , required_iteams, color  )) WITH CLUSTERING ORDER BY (required_iteams ASC ) ;")
     rows = session.execute(
@@ -18,6 +18,7 @@ def test_cassandra():
     if rows:
         session.execute(" DROP KEYSPACE IF EXISTS model1 ;")
     session.execute("CREATE KEYSPACE model1 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 } ;")
+    session = cluster.connect('model1') 
     session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_items frozen<set <uuid >> ,PRIMARY KEY (pname , required_items, color  )) WITH CLUSTERING ORDER BY (required_items ASC ) ;")
     session.execute("CREATE TABLE model1.product_list1_by_id (pid uuid PRIMARY KEY, category text, color text, dname text, pname text, required_items frozen<set<uuid >> );")
     session.execute("CREATE TABLE model1.trash (pid uuid PRIMARY KEY, category text, color text, dname text, pname text, required_items frozen<set<uuid >> );")
@@ -41,5 +42,5 @@ def test_cassandra():
     # sync_table(ProductList)
     # mc = ProductList(pname='a', dname='A', required_items=['a', 'b'], category='mic', pid=uuid.uuid1())
     # mc.save()
-if __name__ = "__main__":
+if __name__ == "__main__":
     test_cassandra()
