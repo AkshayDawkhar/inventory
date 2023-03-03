@@ -3,6 +3,37 @@
 
 This Django API is designed to maintain and build products using the Cassandra NoSQL database.
 
+## Installation
+
+required
+
+`python=>3`
+`Cassandra`
+
+```bash
+  git clone https://github.com/AkshayDawkhar/inventory
+  cd inventory 
+```
+create virtual environment
+```bash
+  virtualenv venv
+```
+Activate
+
+| linux | windows|
+| :-------- | :------- |
+|```source venv/bin/activate```  |```venvironment\Scripts\activate```  | 
+
+requirements
+```bash
+pip install -r requirements.txt
+```
+runserver
+```bash
+cd inventory
+python manage.py sync_cassandra 
+python manage.py runserver
+```
 ## API Reference
 
 ### Products
