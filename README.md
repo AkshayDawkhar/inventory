@@ -311,9 +311,10 @@ python manage.py runserver
 ```http
   DELETE /order/edit/${uuid:pid}
 ```
-| Parameter | Type | Description |
-|:----------|:-----|:------------|
-|           |      |             |
+| Parameter | Type        | Description                 |
+|:----------|:------------|:----------------------------|
+| timestamp | `timestamp` | **required**. on which date |
+| numbers   | `INT`       | **required**. how many      |
 
 ****Edit order****
 ```http
