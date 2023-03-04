@@ -1,5 +1,5 @@
 
-# Invantory 
+# Inventory 
 
 This Django API is designed to maintain and build products using the Cassandra NoSQL database.
 ## Installation
@@ -19,9 +19,9 @@ create virtual environment
 ```
 Activate
 
-| linux | windows|
-| :-------- | :------- |
-|```source venv/bin/activate```  |```venvironment\Scripts\activate```  | 
+| linux                          | windows                             |
+|:-------------------------------|:------------------------------------|
+| ```source venv/bin/activate``` | ```venvironment\Scripts\activate``` | 
 
 requirements
 ```bash
@@ -41,22 +41,22 @@ python manage.py runserver
   GET /products
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-|  |  | |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
  
 ****create new product****
 ```http
   POST /products
 ```
 
-| Parameter | Type     | Description                | 
-| :-------- | :------- | :------------------------- |
-| category |`string`  | **Required**|
-|color | `string`|**default** black|
-| dname |`string`  | **Required**. name to display|
-| required_items |`list[uuid]`  | pid of raw needed to build |
-| required_items_no |`list[INT]`  | number of raw needed as per required_items |
+| Parameter         | Type         | Description                                | 
+|:------------------|:-------------|:-------------------------------------------|
+| category          | `string`     | **Required**                               |
+| color             | `string`     | **default** black                          |
+| dname             | `string`     | **Required**. name to display              |
+| required_items    | `list[uuid]` | pid of raw needed to build                 |
+| required_items_no | `list[INT]`  | number of raw needed as per required_items |
 
 ```json
 {
@@ -74,17 +74,17 @@ python manage.py runserver
 ```http
   GET /products/${uuid:pid}
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|      |    |         |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
 
 ****move product to trash****
 ```http
   DELETE /products/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
 |||||
 
 ****update product****
@@ -92,13 +92,13 @@ python manage.py runserver
   PUT /products/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| category |`string`  | **Required**|
-|color | `string`|**default** black|
-| dname |`string`  | **Required**. name to display|
-| required_items |`list[uuid]`  | pid of raw needed to build |
-| required_items_no |`list[INT]`  | number of raw needed as per required_items |
+| Parameter         | Type         | Description                                |
+|:------------------|:-------------|:-------------------------------------------|
+| category          | `string`     | **Required**                               |
+| color             | `string`     | **default** black                          |
+| dname             | `string`     | **Required**. name to display              |
+| required_items    | `list[uuid]` | pid of raw needed to build                 |
+| required_items_no | `list[INT]`  | number of raw needed as per required_items |
 
 ```json
 {
@@ -119,8 +119,8 @@ python manage.py runserver
   GET /trash/
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
 |||||
 
 ****GET Trashed product****
@@ -129,8 +129,8 @@ python manage.py runserver
   GET /trash/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
 |||||
 
 ****restore trashed product****
@@ -138,35 +138,35 @@ python manage.py runserver
   POST /trash/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| ||| |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           ||| |
 
 ****delete trashed product before 30 days****
 ```http
   DELETE /trash/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `pid`     | `UUID`   | **Required**. pid to |
+| Parameter | Type   | Description          |
+|:----------|:-------|:---------------------|
+| `pid`     | `UUID` | **Required**. pid to |
 
 ### Build
 ****GET all build product details****
 ```http
   GET /build/
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|      |    |         |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
 
 ****get max possible product can build in available raw****
 ```http
   GET /build/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
 |||||
 
 ****build product****
@@ -174,26 +174,26 @@ python manage.py runserver
   POST /build/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `build_no`     | `INT`   | **Required**. number of product to build |
+| Parameter  | Type  | Description                              |
+|:-----------|:------|:-----------------------------------------|
+| `build_no` | `INT` | **Required**. number of product to build |
 
 ****discard product****
 ```http
   DELETE /build/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `discard_no`     | `INT`   | **Required**. number of product to discard |
+| Parameter    | Type  | Description                                |
+|:-------------|:------|:-------------------------------------------|
+| `discard_no` | `INT` | **Required**. number of product to discard |
 
 ****get build details****
 ```http
   GET /build/edit/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
 |||||
 
 ****Edit product build info****
@@ -201,17 +201,17 @@ python manage.py runserver
   PUT /build/edit/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `build_no`     | `INT`   | **Required**. to set product to build number|
+| Parameter  | Type  | Description                                  |
+|:-----------|:------|:---------------------------------------------|
+| `build_no` | `INT` | **Required**. to set product to build number |
 
 ****Required****
 ```http
   GET /build/required/${uuid:pid}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
 ||||
 
 ### Account
@@ -219,73 +219,116 @@ python manage.py runserver
 ```http
   GET /account/
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|      |    |         |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
 
 ****create worker account****
 ```http
   POST /account/
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|f_name      |`Text`    |**required**. first name of user         |
-|l_name      |`Text`    |**required**. last name of user         |
-|mail    |`mail`    |**required**. unregistered mail for user         |
-|username    |`Text`    |**required**. username for user         |
-|password    |`Text`    |**required**. password for user         |
+| Parameter | Type   | Description                              |
+|:----------|:-------|:-----------------------------------------|
+| f_name    | `Text` | **required**. first name of user         |
+| l_name    | `Text` | **required**. last name of user          |
+| mail      | `mail` | **required**. unregistered mail for user |
+| username  | `Text` | **required**. username for user          |
+| password  | `Text` | **required**. password for user          |
 
 ****GET workers account****
 ```http
   GET /account/${string:username}
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|      |    |         |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
 
 ****Edit workers account****
 ```http
   PUT /account/${string:username}
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|f_name      |`Text`    |**required**. first name of user  |
-|l_name      |`Text`    |**required**. last name of user   |
+| Parameter | Type   | Description                      |
+|:----------|:-------|:---------------------------------|
+| f_name    | `Text` | **required**. first name of user |
+| l_name    | `Text` | **required**. last name of user  |
 
 ****GET all admin account****
 ```http
   GET /account/admin
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|      |    |         |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
 
 ****create admin account****
 ```http
   POST /account/admin/
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|f_name      |`Text`    |**required**. first name of user         |
-|l_name      |`Text`    |**required**. last name of user         |
-|mail    |`mail`    |**required**. unregistered mail for user         |
-|username    |`Text`    |**required**. username for user         |
-|password    |`Text`    |**required**. password for user         |
+| Parameter | Type   | Description                              |
+|:----------|:-------|:-----------------------------------------|
+| f_name    | `Text` | **required**. first name of user         |
+| l_name    | `Text` | **required**. last name of user          |
+| mail      | `mail` | **required**. unregistered mail for user |
+| username  | `Text` | **required**. username for user          |
+| password  | `Text` | **required**. password for user          |
 
 ****GET admin account****
 ```http
   GET /account/admin/${string:username}
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|      |    |         |
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
 
 ****Edit admin account****
 ```http
   PUT /account/admin/${string:username}
 ```
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-|f_name      |`Text`    |**required**. first name of user  |
-|l_name      |`Text`    |**required**. last name of user   |
+| Parameter | Type   | Description                      |
+|:----------|:-------|:---------------------------------|
+| f_name    | `Text` | **required**. first name of user |
+| l_name    | `Text` | **required**. last name of user  |
 
+### Order
+****GET all workers order****
+```http
+  GET /order/
+```
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
+
+****create order****
+```http
+  POST /order/edit/
+```
+| Parameter | Type        | Description                 |
+|:----------|:------------|:----------------------------|
+| timestamp | `timestamp` | **required**. on which date |
+| numbers   | `INT`       | **required**. how many      |
+
+****Delete order****
+```http
+  DELETE /order/edit/${uuid:pid}
+```
+| Parameter | Type | Description |
+|:----------|:-----|:------------|
+|           |      |             |
+
+****Edit order****
+```http
+  PUT /order/edit/${string:username}
+```
+| Parameter | Type        | Description                 |
+|:----------|:------------|:----------------------------|
+| timestamp | `timestamp` | **required**. on which date |
+| numbers   | `INT`       | **required**. how many      |
+
+****complete order****
+```http
+  POST /order/${uuid:pid}
+```
+| Parameter | Type        | Description                 |
+|:----------|:------------|:----------------------------|
+| timestamp | `timestamp` | **required**. on which date |
+| numbers   | `INT`       | **required**. how many      |
