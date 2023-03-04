@@ -2,7 +2,6 @@
 # Invantory 
 
 This Django API is designed to maintain and build products using the Cassandra NoSQL database.
-
 ## Installation
 
 required
@@ -232,6 +231,7 @@ python manage.py runserver
 | :-------- | :------- | :-------------------------------- |
 |f_name      |`Text`    |**required**. first name of user         |
 |l_name      |`Text`    |**required**. last name of user         |
+|mail    |`mail`    |**required**. unregistered mail for user         |
 |username    |`Text`    |**required**. username for user         |
 |password    |`Text`    |**required**. password for user         |
 
@@ -246,6 +246,43 @@ python manage.py runserver
 ****Edit workers account****
 ```http
   PUT /account/${string:username}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|f_name      |`Text`    |**required**. first name of user  |
+|l_name      |`Text`    |**required**. last name of user   |
+
+****GET all admin account****
+```http
+  GET /account/admin
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|      |    |         |
+
+****create admin account****
+```http
+  POST /account/admin/
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|f_name      |`Text`    |**required**. first name of user         |
+|l_name      |`Text`    |**required**. last name of user         |
+|mail    |`mail`    |**required**. unregistered mail for user         |
+|username    |`Text`    |**required**. username for user         |
+|password    |`Text`    |**required**. password for user         |
+
+****GET admin account****
+```http
+  GET /account/admin/${string:username}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+|      |    |         |
+
+****Edit admin account****
+```http
+  PUT /account/admin/${string:username}
 ```
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
