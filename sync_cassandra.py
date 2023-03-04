@@ -16,7 +16,11 @@ def test_cassandra():
         "SELECT * FROM system_schema.keyspaces WHERE keyspace_name='model1'")
 
     if rows:
-        session.execute(" DROP KEYSPACE IF EXISTS model1 ;")
+        a = input('model1 already exists did you want to delete it [yes/no]:')
+        if a == 'yes':
+            session.execute(" DROP KEYSPACE IF EXISTS model1 ;")
+        else:
+            return
     session.execute("CREATE KEYSPACE model1 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 } ;")
     session = cluster.connect('model1') 
     session.execute("CREATE TABLE IF NOT EXISTS  model1.product_list1 ( pname text ,color text , category text , dname text ,pid uuid , required_items frozen<set <uuid >> ,PRIMARY KEY (pname , required_items, color  )) WITH CLUSTERING ORDER BY (required_items ASC ) ;")
