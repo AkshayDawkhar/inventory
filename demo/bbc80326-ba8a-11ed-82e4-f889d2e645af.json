@@ -1,0 +1,11 @@
+{
+    "pid": "bbc80326-ba8a-11ed-82e4-f889d2e645af",
+    "category": "PCB",
+    "color": "black",
+    "dname": "RS 3G",
+    "pname": "rs3g",
+    "required_items": [
+        "8a9bcdaa-ba8a-11ed-bdf7-f889d2e645af",
+        "9c32f6d8-ba8a-11ed-9b5e-f889d2e645af"
+    ]
+}
