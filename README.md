@@ -252,6 +252,15 @@ python manage.py runserver
 | f_name    | `Text` | **required**. first name of user |
 | l_name    | `Text` | **required**. last name of user  |
 
+****Login workers account****
+```http
+  POST /account/login/
+```
+| Parameter | Type   | Description                     |
+|:----------|:-------|:--------------------------------|
+| username  | `Text` | **required**.                   |
+| password  | `Text` | **required**.                   |
+
 ****GET all admin account****
 ```http
   GET /account/admin
@@ -288,6 +297,15 @@ python manage.py runserver
 |:----------|:-------|:---------------------------------|
 | f_name    | `Text` | **required**. first name of user |
 | l_name    | `Text` | **required**. last name of user  |
+
+****Login admin account****
+```http
+  POST /account/admin/login/
+```
+| Parameter | Type   | Description                     |
+|:----------|:-------|:--------------------------------|
+| username  | `Text` | **required**.                   |
+| password  | `Text` | **required**.                   |
 
 ### Order
 ****GET all workers order****
