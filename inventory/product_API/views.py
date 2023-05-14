@@ -10,15 +10,17 @@ from rest_framework import status
 
 class ProductList(APIView):
     def get(self, request):
+        if 'category' in request.data:
+            return Response(data=product_cql.product_list(category=request.data['category']), status=status.HTTP_200_OK)
         # get all product
-        return Response(data=product_cql.product_list(), status=status.HTTP_200_OK)
+        return Response(data=product_cql.product_list(category=None), status=status.HTTP_200_OK)
 
     def post(self, request):
         # code for creating product
         sp = CreateProductSerializer(data=request.data)
         try:
             if sp.is_valid():
-                return Response(data=product_cql.product_list())
+                return Response(data=product_cql.product_list(category=None))
             # print(sp.errors)
         except InvalidDname:
             return Response(data={"dname": ["Invalid Name"]}, status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -65,7 +67,7 @@ class Product(APIView):
         except NotFound:
             return Response(data={'error': 'Product Not Found %s' % (pid,)},
                             status=status.HTTP_404_NOT_FOUND)
-        return Response(data=product_cql.product_list(), status=status.HTTP_202_ACCEPTED)
+        return Response(data=product_cql.product_list(category=None), status=status.HTTP_202_ACCEPTED)
 
 
 class Trashes(APIView):

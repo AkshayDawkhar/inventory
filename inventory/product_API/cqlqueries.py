@@ -51,6 +51,7 @@ restore_fromTrash_query = session.prepare("SELECT * from trash WHERE pid = ? LIM
 delete_Trash_query = session.prepare("DELETE from trash WHERE pid = ? IF EXISTS;")
 get_trashes_query = session.prepare("SELECT dname,pid,TTL(dname) FROM trash ;")
 product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
+product_category_query = session.prepare("SELECT dname,pid FROM product_list1 WHERE category = ? ALLOW FILTERING ;")
 get_trash_query = session.prepare(
     "SELECT pid,dname,pname,color,required_items,category,TTL(pname) FROM trash WHERE pid = ? ;")
 
@@ -64,7 +65,12 @@ def get_product(pid):
     return a
 
 
-def product_list():
+def product_list(category):
+    if category is not None:
+        # print('------------->category')
+
+        a = list(session.execute(product_category_query,(category,)).all())
+        return a
     # sp = session.prepare("SELECT dname , pid FROM product_list1 WHERE pname = ?")
     return session.execute(product_list_query).all()
     # return a.all()
