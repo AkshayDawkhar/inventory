@@ -54,6 +54,9 @@ product_list_query = session.prepare("SELECT dname , pid FROM product_list1 ;")
 product_category_query = session.prepare("SELECT dname,pid FROM product_list1 WHERE category = ? ALLOW FILTERING ;")
 get_trash_query = session.prepare(
     "SELECT pid,dname,pname,color,required_items,category,TTL(pname) FROM trash WHERE pid = ? ;")
+get_category_query = session.prepare("SELECT * FROM category ;")
+delete_category_query = session.prepare("DELETE from category WHERE id =? IF EXISTS;")
+insert_category_query = session.prepare("INSERT INTO category (id,category ) VALUES (?,?) IF NOT EXISTS ;")
 
 
 def get_product(pid):
@@ -69,7 +72,7 @@ def product_list(category):
     if category is not None:
         # print('------------->category')
 
-        a = list(session.execute(product_category_query,(category,)).all())
+        a = list(session.execute(product_category_query, (category,)).all())
         return a
     # sp = session.prepare("SELECT dname , pid FROM product_list1 WHERE pname = ?")
     return session.execute(product_list_query).all()
@@ -106,7 +109,8 @@ def delete_product(pid=None, pname=None, required_items=None, color=None, moveto
         it = get_product(pid)
         # INSERT INTO trash_product_list1 (pname , required_items , color , category , dname , pid ) VALUES ( '1',{'row1'},'red', '12', 'AS', UUID() ) ;
         session.execute(insert_into_trash_query, (
-            it.get('pname'), it.get('required_items'), it.get('color'), it.get('category'), it.get('dname'), it.get('pid')))
+            it.get('pname'), it.get('required_items'), it.get('color'), it.get('category'), it.get('dname'),
+            it.get('pid')))
         build_cql.delete_build(pid=pid, moveto_trash=moveto_trash)
 
     if removefrom_product_list1_by_id:
@@ -176,6 +180,15 @@ def get_trash(pid):
         raise NotFound
     a['required_items'] = list(a.get('required_items'))
     return a
+
+
+def insert_category(id,category):
+    a = session.execute(insert_category_query, (id,category)).was_applied
+    return a
+
+
+def get_categories():
+    return session.execute(get_category_query).all()
 
 
 if __name__ == "__main__":

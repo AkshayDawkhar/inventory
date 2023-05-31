@@ -1,17 +1,22 @@
+import re
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from . import  cqlqueries as product_cql
-from .cqlqueries import  DatabaseError, NotFound, Conflict
+from . import cqlqueries as product_cql
+from .cqlqueries import DatabaseError, NotFound, Conflict
 from .serializers import CreateProductSerializer, UpdateProductSerializer, InvalidDname
 from rest_framework import status
+
 
 # product_cql = ProductCQL()
 
 
 class ProductList(APIView):
     def get(self, request):
-        if 'category' in request.data:
-            return Response(data=product_cql.product_list(category=request.data['category']), status=status.HTTP_200_OK)
+        if 'category' in request.query_params:
+            print(request.query_params['category'])
+            return Response(data=product_cql.product_list(category=request.query_params['category']),
+                            status=status.HTTP_200_OK)
         # get all product
         return Response(data=product_cql.product_list(category=None), status=status.HTTP_200_OK)
 
@@ -45,9 +50,9 @@ class Product(APIView):
         try:
             if sp.is_valid():
                 a = product_cql.update_product(pid=pid, pname=sp.data.get('pname'), color=sp.data.get('color'),
-                                     required_items=sp.data.get('required_items'), dname=sp.data.get('dname'),
-                                     category=sp.data.get('category'),
-                                     required_items_no=sp.data.get('required_items_no'))
+                                               required_items=sp.data.get('required_items'), dname=sp.data.get('dname'),
+                                               category=sp.data.get('category'),
+                                               required_items_no=sp.data.get('required_items_no'))
             else:
                 return Response(data=sp.errors, status=status.HTTP_400_BAD_REQUEST)
         except NotFound:
@@ -95,3 +100,21 @@ class Trash(APIView):
     def delete(self, request, pid):
         product_cql.delete_trash(pid)
         return Response(data=product_cql.get_trashes(), status=status.HTTP_200_OK)
+
+
+class Category(APIView):
+    def get(self, request):
+        di = product_cql.get_categories()
+        return Response(di, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        if 'category' in request.data:
+            id = re.sub('[^A-Za-z0-9]+', '', request.data['category'].lower())
+            category = request.data['category']
+            di = product_cql.insert_category(id, category)
+            if di:
+                return Response(data=di, status=status.HTTP_200_OK)
+            else:
+                return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
