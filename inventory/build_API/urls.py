@@ -12,4 +12,5 @@ urlpatterns = [
     path('stock/<uuid:pid>', views.Stock.as_view(), name='stock'),
     path('maxbuild/<uuid:pid>', views.GetMax.as_view(), name='get_max'),
     path('needs/<uuid:pid>', views.GetNeeded.as_view(), name='get_needed'),
+    path('building/', views.Building.as_view(), name='get_building')
 ]

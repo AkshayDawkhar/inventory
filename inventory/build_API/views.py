@@ -3,7 +3,7 @@ import uuid
 from . import cqlqueries as build_cql
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .cqlqueries import  NotFound, InvalidNumber
+from .cqlqueries import NotFound, InvalidNumber
 from .serializer import RequiredItemSerializer, BuildProductSerializer, DiscardProductSerializer, StockProductSerializer
 from rest_framework import status
 
@@ -145,4 +145,9 @@ class GetMax(APIView):
 class GetNeeded(APIView):
     def get(self, request, pid):
         needed = build_cql.generate_needed(pid)
-        return Response(data=needed,status=status.HTTP_200_OK)
+        return Response(data=needed, status=status.HTTP_200_OK)
+
+
+class Building(APIView):
+    def get(self, request):
+        return Response(data=build_cql.get_building_only(), status=status.HTTP_200_OK)

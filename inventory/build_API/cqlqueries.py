@@ -1,7 +1,5 @@
-from datetime import date as dates
-from datetime import datetime
 import uuid
-
+from datetime import date as dates
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 
@@ -59,8 +57,8 @@ update_needed_query = session.prepare("UPDATE product_builds SET needed = ? WHER
 get_needed_query = session.prepare("SELECT needed FROM product_builds WHERE pid = ? LIMIT 1;")
 update_complete_build_query = session.prepare(
     "UPDATE complete_build SET numbers = numbers + ?  WHERE date = ? AND pid = ? ;")
-
-
+get_building_only_query = session.prepare("SELECT * FROM product_builds WHERE building > 0 ALLOW FILTERING ;")
+get_dname = session.prepare("SELECT dname FROM  product_list1_by_id WHERE pid = ?;")
 def create_build(pid, building=0, instock=0, needed=0, recommended=0):
     session.execute(create_build_query, (pid, building, instock, needed, recommended))
 
@@ -301,6 +299,16 @@ def update_complete_build(pid, numbers, date=None, ):
         date = dates.fromtimestamp(date)
     session.execute(update_complete_build_query, (numbers, date, pid))
 
+def get_building_only():
+    a = session.execute(get_building_only_query).all()
+    a1 = session.execute(get_dname,(uuid.UUID('c4fab20c-eb1a-11ed-beb5-f889d2e645af'),)).one()
+    # print(a1)
+    b=[]
+    for i in a:
+        i.update(session.execute(get_dname,(i['pid'],)).one())
+        b.append(i)
+        # print(b)
+    return b
 
 # for testing the query's
 if __name__ == '__main__':
@@ -331,4 +339,5 @@ if __name__ == '__main__':
     # print(generate_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af')))
     # remove_needed(uuid.UUID('89eb8424-a250-11ed-a23b-f889d2e645af'), numbers=12)
     # remove_needed_by_pid(uuid.UUID('dca8a65a-a490-11ed-9017-f889d2e645af'), 12)
-    update_complete_build(pid=uuid.UUID('154f1934-a4b5-11ed-ad91-f889d2e645af'), date=167558445)
+    # update_complete_build(pid=uuid.UUID('154f1934-a4b5-11ed-ad91-f889d2e645af'), date=167558445)
+    get_building_only()
