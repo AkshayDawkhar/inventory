@@ -1,3 +1,5 @@
+import uuid
+
 from cassandra.cluster import Cluster
 from cassandra.cluster import dict_factory
 
@@ -31,6 +33,8 @@ register_mail_admin_query = session.prepare("INSERT INTO reg_mail_admin (mail) V
 get_all_mail_admin_query = session.prepare("SELECT * FROM reg_mail_admin ;")
 get_mail_admin_query = session.prepare("SELECT * FROM reg_mail_admin WHERE mail = ? LIMIT 1;")
 remove_mail_admin_query = session.prepare("DELETE from reg_mail_admin  WHERE mail = ? IF EXISTS;")
+create_session_query = session.prepare(
+    "INSERT INTO auth (key , admin , name ) VALUES ( ?,?,?) IF NOT EXISTS using TTL 864000;")
 
 
 class AlreadyExists(Exception):
@@ -167,6 +171,13 @@ def remove_mail_admin(mail):
     return session.execute(remove_mail_admin_query, (mail,)).was_applied
 
 
+def generate_token(is_admin, username):
+    uid = uuid.uuid4()
+    a = session.execute(create_session_query, (uid, bool(is_admin), username)).was_applied
+    print(a)
+    return uid
+
+
 if __name__ == '__main__':
     # print(get_workers())
     # print(update_worker('a', 'a', 'a'))
@@ -180,4 +191,9 @@ if __name__ == '__main__':
     # print(bool(get_worker_username('mongodb')))
     # print(register_mail_worker('akshay'))
     # print(get_mail_worker(mail='akshay'))
-    print(remove_mail_worker('aayush12'))
+    # print(remove_mail_worker('aayush12'))
+    # id = uuid.uuid4()
+    # a = session.prepare("INSERT INTO auth (key , admin , name ) VALUES ( ?,?,?) using TTL 864000;")
+    # b = session.execute(a, (id, True, 'me'))
+    a = generate_token(True, 'akshay')
+    print(a)

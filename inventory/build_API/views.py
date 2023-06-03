@@ -150,4 +150,5 @@ class GetNeeded(APIView):
 
 class Building(APIView):
     def get(self, request):
+        print(request.headers)
         return Response(data=build_cql.get_building_only(), status=status.HTTP_200_OK)
